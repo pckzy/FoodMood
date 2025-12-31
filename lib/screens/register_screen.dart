@@ -20,19 +20,75 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
+  String? _emailError;
+  String? _passwordError;
+  String? _confirmPasswordError;
+
+  @override
+  void initState() {
+    super.initState();
+    // Clear error when user types
+    _emailController.addListener(() {
+      if (_emailError != null) {
+        setState(() => _emailError = null);
+      }
+    });
+    _passwordController.addListener(() {
+      if (_passwordError != null) {
+        setState(() => _passwordError = null);
+      }
+    });
+    _confirmPasswordController.addListener(() {
+      if (_confirmPasswordError != null) {
+        setState(() => _confirmPasswordError = null);
+      }
+    });
+  }
+
+  bool _isValidEmail(String email) {
+    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+  }
+
   // Get auth service
   final authService = AuthService();
 
   // Sign up button pressed
   void signUp() async {
-    final email = _emailController.text;
+    final email = _emailController.text.trim();
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
 
+    // Clear previous errors
+    setState(() {
+      _emailError = null;
+      _passwordError = null;
+      _confirmPasswordError = null;
+    });
+
+    // Validate email
+    if (email.isEmpty) {
+      setState(() => _emailError = 'Email is required');
+      return;
+    }
+
+    if (!_isValidEmail(email)) {
+      setState(() => _emailError = 'Invalid email format');
+      return;
+    }
+
+    // Validate password
+    if (password.isEmpty) {
+      setState(() => _passwordError = 'Password is required');
+      return;
+    }
+
+    if (password.length < 6) {
+      setState(() => _passwordError = 'Password must be at least 6 characters');
+      return;
+    }
+
     if (password != confirmPassword) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Password don't match")));
+      setState(() => _confirmPasswordError = 'Passwords do not match');
       return;
     }
 
@@ -44,9 +100,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
       Navigator.pop(context);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Error: $e")));
+        if (mounted) {
+          final errorMessage = e.toString().toLowerCase();
+
+          if (errorMessage.contains('already registered')) {
+            setState(() {
+              _emailError = 'This email is already registered';
+            });
+          }
+        }
+        // ScaffoldMessenger.of(
+        //   context,
+        // ).showSnackBar(SnackBar(content: Text("Error: $e")));
       }
     }
   }
@@ -120,6 +185,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             hintText: 'email@foodmood.com',
                             icon: Icons.mail_outline,
                             controller: _emailController,
+                            errorText: _emailError,
                           ),
 
                           const SizedBox(height: 24),
@@ -138,6 +204,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 _isPasswordVisible = !_isPasswordVisible;
                               });
                             },
+                            errorText: _passwordError,
                           ),
 
                           const SizedBox(height: 24),
@@ -157,6 +224,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     !_isConfirmPasswordVisible;
                               });
                             },
+                            errorText: _confirmPasswordError,
                           ),
 
                           const SizedBox(height: 48),

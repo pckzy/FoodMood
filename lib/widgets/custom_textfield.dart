@@ -9,6 +9,7 @@ class CustomTextField extends StatelessWidget {
   final bool isPasswordVisible;
   final bool isRegister;
   final VoidCallback? onTogglePassword;
+  final String? errorText;
 
   const CustomTextField({
     super.key,
@@ -20,10 +21,13 @@ class CustomTextField extends StatelessWidget {
     this.isRegister = false,
     this.isPasswordVisible = false,
     this.onTogglePassword,
+    this.errorText,
   });
 
   @override
   Widget build(BuildContext context) {
+    final hasError = errorText != null && errorText!.isNotEmpty;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -43,6 +47,10 @@ class CustomTextField extends StatelessWidget {
           decoration: BoxDecoration(
             color: const Color(0xFFF4EDE7),
             borderRadius: BorderRadius.circular(12), // rounded-xl
+            border:
+                hasError
+                ? Border.all(color: Colors.red, width: 1.5)
+                : null,
           ),
           child: TextField(
             controller: controller,
@@ -59,7 +67,11 @@ class CustomTextField extends StatelessWidget {
                 color: Color(0xFF9C7349),
                 fontWeight: FontWeight.w500,
               ),
-              prefixIcon: Icon(icon, color: Color(0xFF9C7349), size: 24),
+              prefixIcon: Icon(
+                icon,
+                color: hasError ? Colors.red : const Color(0xFF9C7349),
+                size: 24,
+              ),
               suffixIcon: isPassword
                   ? IconButton(
                       icon: Icon(
@@ -80,6 +92,21 @@ class CustomTextField extends StatelessWidget {
             ),
           ),
         ),
+        // Error message แสดงใต้ TextField
+        if (hasError) ...[
+          const SizedBox(height: 6),
+          Padding(
+            padding: const EdgeInsets.only(left: 4),
+            child: Text(
+              errorText!,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.red,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
         if (isPassword && !isRegister)
           Align(
             alignment: Alignment.centerRight,
