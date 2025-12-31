@@ -7,6 +7,7 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final bool isPassword;
   final bool isPasswordVisible;
+  final bool isRegister;
   final VoidCallback? onTogglePassword;
 
   const CustomTextField({
@@ -16,6 +17,7 @@ class CustomTextField extends StatelessWidget {
     required this.icon,
     required this.controller,
     this.isPassword = false,
+    this.isRegister = false,
     this.isPasswordVisible = false,
     this.onTogglePassword,
   });
@@ -78,7 +80,7 @@ class CustomTextField extends StatelessWidget {
             ),
           ),
         ),
-        if (isPassword)
+        if (isPassword && !isRegister)
           Align(
             alignment: Alignment.centerRight,
             child: Padding(

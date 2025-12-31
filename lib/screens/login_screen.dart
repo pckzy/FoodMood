@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:foodmood/screens/register_screen.dart';
+import 'package:foodmood/widgets/auth_footer.dart';
 import 'package:foodmood/widgets/primary_button.dart';
-import '../widgets/custom_textfield.dart';
+import 'package:foodmood/widgets/custom_textfield.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -52,7 +54,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           // Password Input
                           CustomTextField(
                             label: 'Password',
-                            hintText: '••••••••',
+                            hintText: '********',
+                            // hintText: '••••••••',
                             icon: Icons.lock_outline,
                             controller: _passwordController,
                             isPassword: true,
@@ -74,42 +77,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
 
                   // Footer
-                  Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'New to FoodMood?',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Color(0xFF9C7349),
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            TextButton(
-                              onPressed: () {},
-                              style: TextButton.styleFrom(
-                                padding: EdgeInsets.zero,
-                                minimumSize: const Size(0, 0),
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              ),
-                              child: const Text(
-                                'Create an Account',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFFF48C25),
-                                ),
-                              ),
-                            ),
-                          ],
+                  AuthFooter(
+                    footerText: 'New to FoodMood?',
+                    btnText: 'Create an Account',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (context) => const RegisterScreen(),
                         ),
-                        const SizedBox(height: 16),
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 ],
               ),
