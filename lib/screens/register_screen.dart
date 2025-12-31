@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foodmood/auth/auth_service.dart';
 import 'package:foodmood/widgets/auth_footer.dart';
 import 'package:foodmood/widgets/custom_textfield.dart';
 import 'package:foodmood/widgets/primary_button.dart';
@@ -18,6 +19,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+
+  // Get auth service
+  final authService = AuthService();
+
+  // Sign up button pressed
+  void signUp() async {
+    final email = _emailController.text;
+    final password = _passwordController.text;
+    final confirmPassword = _confirmPasswordController.text;
+
+    if (password != confirmPassword) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Password don't match")));
+      return;
+    }
+
+    // Attempt sign up
+    try {
+      await authService.signUpWithEmailPassword(email, password);
+
+      // Pop this register page
+      Navigator.pop(context);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Error: $e")));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +162,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           const SizedBox(height: 48),
 
                           // Login Button
-                          PrimaryButton(text: 'Sign Up'),
+                          PrimaryButton(
+                            text: 'Sign Up',
+                            onPressed: () {
+                              signUp();
+                            },
+                          ),
                         ],
                       ),
                     ),

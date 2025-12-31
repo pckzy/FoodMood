@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foodmood/auth/auth_service.dart';
 import 'package:foodmood/screens/register_screen.dart';
 import 'package:foodmood/widgets/auth_footer.dart';
 import 'package:foodmood/widgets/primary_button.dart';
@@ -13,8 +14,60 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _isPasswordVisible = false;
+  String? _errorMessage;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  void _clearForm() {
+    _emailController.clear();
+    _passwordController.clear();
+    setState(() {
+      _errorMessage = null;
+      _isPasswordVisible = false;
+    });
+  }
+
+  String _getErrorMessage(String error) {
+    final errorLower = error.toLowerCase();
+
+    // Supabase Authentication Errors
+    if (errorLower.contains('invalid login credentials') ||
+        errorLower.contains('invalid_credentials')) {
+      return 'Invalid email or password. Please try again.';
+    }
+
+    return 'An error occurred. Please try again.';
+  }
+
+  // Get auth service
+  final authService = AuthService();
+
+  // Login button pressed
+  void login() async {
+    setState(() {
+      _errorMessage = null;
+    });
+
+    final email = _emailController.text;
+    final password = _passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      setState(() {
+        _errorMessage = 'Please enter both email and password.';
+      });
+      return;
+    }
+
+    try {
+      await authService.signInWithEmailPassword(email, password);
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = _getErrorMessage(e.toString());
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +123,26 @@ class _LoginScreenState extends State<LoginScreen> {
                           const SizedBox(height: 24),
 
                           // Login Button
-                          PrimaryButton(text: 'Log In'),
+                          PrimaryButton(
+                            text: 'Log In',
+                            onPressed: () {
+                              login();
+                            },
+                          ),
+
+                          // Error Message
+                          if (_errorMessage != null) ...[
+                            const SizedBox(height: 12),
+                            Center(
+                              child: Text(
+                                _errorMessage!,
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -87,6 +159,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           builder: (context) => const RegisterScreen(),
                         ),
                       );
+
+                      _clearForm();
                     },
                   ),
                 ],
