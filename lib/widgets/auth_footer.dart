@@ -13,6 +13,8 @@ class AuthFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -22,7 +24,8 @@ class AuthFooter extends StatelessWidget {
             children: [
               Text(
                 footerText,
-                style: TextStyle(fontSize: 14, color: Color(0xFF9C7349)),
+                style: TextStyle(fontSize: 14, color: colorScheme.onPrimary),
+                // style: TextStyle(fontSize: 14, color: Color(0xFF9C7349)),
               ),
               const SizedBox(width: 4),
               TextButton(
@@ -37,7 +40,8 @@ class AuthFooter extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFFF48C25),
+                    color: colorScheme.secondary,
+                    // color: Color(0xFFF48C25),
                   ),
                 ),
               ),

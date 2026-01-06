@@ -71,8 +71,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F7F5),
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: SingleChildScrollView(
           child: ConstrainedBox(
@@ -185,6 +187,8 @@ class _HeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
       child: Column(
@@ -195,7 +199,8 @@ class _HeaderSection extends StatelessWidget {
             height: 200,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: const Color(0xFFF48C25).withValues(alpha: 0.1),
+              color: colorScheme.secondary.withValues(alpha: 0.1),
+              // color: const Color(0xFFF48C25).withValues(alpha: 0.1),
               image: const DecorationImage(
                 image: AssetImage('assets/images/foodmood-logo.png'),
                 fit: BoxFit.cover,
@@ -205,24 +210,26 @@ class _HeaderSection extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           // Title
-          const Text(
+          Text(
             'FoodMood',
             style: TextStyle(
               fontSize: 30, // text-3xl (1.875rem = 30px)
               fontWeight: FontWeight.bold,
-              color: Color(0xFF1C140D),
+              color: colorScheme.primary,
+              // color: Color(0xFF1C140D),
               letterSpacing: 0.5,
               height: 1.2,
             ),
           ),
           const SizedBox(height: 8),
           // Subtitle
-          const Text(
+          Text(
             'Find your flavor',
             style: TextStyle(
               fontSize: 16, // text-base
               fontWeight: FontWeight.w500,
-              color: Color(0xFF9C7349),
+              color: colorScheme.onPrimary,
+              // color: Color(0xFF9C7349),
             ),
           ),
         ],

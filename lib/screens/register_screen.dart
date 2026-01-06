@@ -118,8 +118,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F7F5),
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: SingleChildScrollView(
           child: ConstrainedBox(
@@ -146,13 +148,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
                           'Create Account',
                           style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.w800, // extrabold
-                            color: Color(0xFF1C140D),
+                            color: colorScheme.primary,
                             height: 1.2,
                             letterSpacing: 0.5,
                           ),
@@ -163,7 +165,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
-                            color: Color(0xFF9C7349),
+                            color: colorScheme.onPrimary,
                             height: 1.5,
                           ),
                         ),
@@ -273,6 +275,8 @@ class _HeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -281,9 +285,9 @@ class _HeaderSection extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: colorScheme.onSurfaceVariant,
             borderRadius: BorderRadius.circular(9999),
-            border: Border.all(color: const Color(0xFFE8DBCE)),
+            border: Border.all(color: colorScheme.tertiary),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.05),
@@ -299,10 +303,10 @@ class _HeaderSection extends StatelessWidget {
               onTap: () {
                 Navigator.pop(context);
               },
-              child: const Icon(
+              child: Icon(
                 Icons.arrow_back,
                 size: 20,
-                color: Color(0xFF1C140D),
+                color: colorScheme.primary,
               ),
             ),
           ),

@@ -27,6 +27,7 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasError = errorText != null && errorText!.isNotEmpty;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,38 +39,40 @@ class CustomTextField extends StatelessWidget {
             style: TextStyle(
               fontSize: 14, // text-sm
               fontWeight: FontWeight.w600,
-              color: Color(0xFF1C140D),
+              // color: Color(0xFF1C140D),
+              color: colorScheme.primary,
             ),
           ),
         ),
         Container(
           height: 56, // h-14 (3.5rem = 56px)
           decoration: BoxDecoration(
-            color: const Color(0xFFF4EDE7),
+            color: colorScheme.onSurfaceVariant,
+            // color: const Color(0xFFF4EDE7),
             borderRadius: BorderRadius.circular(12), // rounded-xl
-            border:
-                hasError
-                ? Border.all(color: Colors.red, width: 1.5)
-                : null,
+            border: hasError ? Border.all(color: Colors.red, width: 1.5) : null,
           ),
           child: TextField(
             controller: controller,
             obscureText: isPassword && !isPasswordVisible,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
               // color: Color(0xFF1C140D),
-              color: Color(0xFF9C7349),
+              // color: Color(0xFF9C7349),
+              color: colorScheme.onPrimary,
             ),
             decoration: InputDecoration(
               hintText: hintText,
-              hintStyle: const TextStyle(
-                color: Color(0xFF9C7349),
+              hintStyle: TextStyle(
+                // color: Color(0xFF9C7349),
+                color: colorScheme.onPrimary,
                 fontWeight: FontWeight.w500,
               ),
               prefixIcon: Icon(
                 icon,
-                color: hasError ? Colors.red : const Color(0xFF9C7349),
+                // color: hasError ? Colors.red : const Color(0xFF9C7349),
+                color: hasError ? Colors.red : colorScheme.onPrimary,
                 size: 24,
               ),
               suffixIcon: isPassword
@@ -78,7 +81,8 @@ class CustomTextField extends StatelessWidget {
                         isPasswordVisible
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
-                        color: const Color(0xFF9C7349),
+                        color: colorScheme.onPrimary,
+                        // color: const Color(0xFF9C7349),
                         size: 24,
                       ),
                       onPressed: onTogglePassword,
@@ -119,12 +123,13 @@ class CustomTextField extends StatelessWidget {
                   minimumSize: const Size(0, 0),
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                child: const Text(
+                child: Text(
                   'Forgot Password?',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFFF48C25),
+                    color: colorScheme.secondary,
+                    // color: Color(0xFFF48C25),
                   ),
                 ),
               ),
