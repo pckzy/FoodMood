@@ -7,12 +7,21 @@ ThemeData lightMode = ThemeData(
 
   colorScheme: ColorScheme.light(
     surface: Color(0xFFF8F7F5),
+
     primary: Color(0xFF1C140D),
     onPrimary: Color(0xFF9C7349),
+
     secondary: Color(0xFFF48C25),
+
     tertiary: Color(0xFFE8DBCE),
+    tertiaryContainer: Colors.white,
+    onTertiaryContainer: Color(0xFFF1F5F9),
+    tertiaryFixed: Color(0xFFF1F5F9),
+    onTertiaryFixed: Color(0xFF64748B),
+
     onSurface: Color(0xFF9C7349),
     onSurfaceVariant: Color(0xFFF4EDE7),
+
     surfaceTint: Colors.transparent,
   ),
 );
@@ -23,14 +32,22 @@ ThemeData darkMode = ThemeData(
   fontFamily: 'PlusJakartaSans',
 
   colorScheme: ColorScheme.dark(
-    // surface: Colors.brown.shade800,
     surface: Color(0xFF221910),
+
     primary: Color(0xFFF8F7F5),
     onPrimary: Color(0xFFD4BCA5),
+
     secondary: Color(0xFFF48C25),
+
     tertiary: Color(0xFF2C241B),
+    tertiaryContainer: Color(0xFF322820),
+    onTertiaryContainer: Color(0xFF322820),
+    tertiaryFixed: Color(0xFFD4BCA5),
+    onTertiaryFixed: Color(0xFF7A6558),
+
     onSurface: Color(0xFF7A6558),
     onSurfaceVariant: Color(0xFF322820),
+
     surfaceTint: Colors.transparent,
   ),
 );
@@ -66,7 +83,6 @@ ThemeData darkMode = ThemeData(
 //     shadow: Colors.black,
 //     scrim: Colors.black,
 
-//     // === สำคัญมาก ===
 //     surfaceTint: Colors.transparent,
 //   ),
 // );

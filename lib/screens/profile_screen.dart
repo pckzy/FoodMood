@@ -35,7 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             color: Colors.blue[200],
             onTap: () {
               Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
-            }
+            },
           ),
         ],
       ),

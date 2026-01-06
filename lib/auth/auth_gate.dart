@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foodmood/screens/login_screen.dart';
-import 'package:foodmood/screens/profile_screen.dart';
+import 'package:foodmood/screens/main_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthGate extends StatelessWidget {
@@ -21,7 +21,7 @@ class AuthGate extends StatelessWidget {
         final session = snapshot.hasData ? snapshot.data!.session : null;
 
         if (session != null) {
-          return ProfileScreen();
+          return MainScreen();
         } else {
           return LoginScreen();
         }
