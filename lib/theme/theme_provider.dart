@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:foodmood/theme/theme.dart';
 
 class ThemeProvider with ChangeNotifier {
-  ThemeData _themeData = lightMode;
+  ThemeMode _themeMode = ThemeMode.system;
 
-  ThemeData get themeData => _themeData;
+  ThemeMode get themeMode => _themeMode;
 
-  set themeData(ThemeData themeData) {
-    _themeData = themeData;
-    notifyListeners();
-  }
 
-  void toggleTheme() {
-    if (_themeData == lightMode) {
-      themeData = darkMode;
+  void setTheme(int index) {
+    if (index == 0) {
+      _themeMode = ThemeMode.light;
+    } else if (index == 1) {
+      _themeMode = ThemeMode.dark;
     } else {
-      themeData = lightMode;
+      _themeMode = ThemeMode.system;
     }
+    notifyListeners();
   }
 }

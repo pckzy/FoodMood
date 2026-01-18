@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:foodmood/auth/auth_service.dart';
-import 'package:foodmood/theme/theme_provider.dart';
-import 'package:foodmood/widgets/test_btn.dart';
-import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -31,12 +28,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: Column(
         children: [
           Center(child: Text(currentEmail.toString())),
-          MyButton(
-            color: Colors.blue[200],
-            onTap: () {
-              Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
-            },
-          ),
         ],
       ),
     );

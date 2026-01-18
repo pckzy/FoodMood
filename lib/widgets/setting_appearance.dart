@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:foodmood/theme/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 class SettingAppearance extends StatefulWidget {
   const SettingAppearance({super.key});
@@ -8,11 +10,20 @@ class SettingAppearance extends StatefulWidget {
 }
 
 class _SettingAppearanceState extends State<SettingAppearance> {
-  int _selectedTheme = 2;
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
+    int selectedIndex;
+    if (themeProvider.themeMode == ThemeMode.light) {
+      selectedIndex = 0;
+    } else if (themeProvider.themeMode == ThemeMode.dark) {
+      selectedIndex = 1;
+    } else {
+      selectedIndex = 2;
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,110 +95,26 @@ class _SettingAppearanceState extends State<SettingAppearance> {
                   padding: const EdgeInsets.all(4),
                   child: Row(
                     children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() => _selectedTheme = 0);
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: _selectedTheme == 0
-                                  ? Colors.white
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(6),
-                              boxShadow: _selectedTheme == 0
-                                  ? [
-                                      BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.05),
-                                        blurRadius: 4,
-                                        offset: const Offset(0, 1),
-                                      ),
-                                    ]
-                                  : null,
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Light',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: _selectedTheme == 0
-                                    ? const Color(0xFFF48C25)
-                                    : colorScheme.onTertiaryFixed,
-                              ),
-                            ),
-                          ),
-                        ),
+                      _buildThemeButton(
+                        label: 'Light',
+                        index: 0,
+                        currentSelection: selectedIndex,
+                        onTap: () => themeProvider.setTheme(0),
+                        colorScheme: colorScheme,
                       ),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() => _selectedTheme = 1);
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: _selectedTheme == 1
-                                  ? Colors.white
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(6),
-                              boxShadow: _selectedTheme == 1
-                                  ? [
-                                      BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.05),
-                                        blurRadius: 4,
-                                        offset: const Offset(0, 1),
-                                      ),
-                                    ]
-                                  : null,
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Dark',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: _selectedTheme == 1
-                                    ? const Color(0xFFF48C25)
-                                    : colorScheme.onTertiaryFixed,
-                              ),
-                            ),
-                          ),
-                        ),
+                      _buildThemeButton(
+                        label: 'Dark',
+                        index: 1,
+                        currentSelection: selectedIndex,
+                        onTap: () => themeProvider.setTheme(1),
+                        colorScheme: colorScheme,
                       ),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() => _selectedTheme = 2);
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: _selectedTheme == 2
-                                  ? Colors.white
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(6),
-                              boxShadow: _selectedTheme == 2
-                                  ? [
-                                      BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.05),
-                                        blurRadius: 4,
-                                        offset: const Offset(0, 1),
-                                      ),
-                                    ]
-                                  : null,
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              'System',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: _selectedTheme == 2
-                                    ? const Color(0xFFF48C25)
-                                    : colorScheme.onTertiaryFixed,
-                              ),
-                            ),
-                          ),
-                        ),
+                      _buildThemeButton(
+                        label: 'System',
+                        index: 2,
+                        currentSelection: selectedIndex,
+                        onTap: () => themeProvider.setTheme(2),
+                        colorScheme: colorScheme,
                       ),
                     ],
                   ),
@@ -197,6 +124,46 @@ class _SettingAppearanceState extends State<SettingAppearance> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildThemeButton({
+    required String label,
+    required int index,
+    required int currentSelection,
+    required VoidCallback onTap,
+    required ColorScheme colorScheme,
+  }) {
+    final isSelected = currentSelection == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(6),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 4,
+                    ),
+                  ]
+                : null,
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: isSelected
+                  ? const Color(0xFFF48C25)
+                  : colorScheme.onTertiaryFixed,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

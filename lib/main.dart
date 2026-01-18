@@ -32,8 +32,15 @@ class MainApp extends StatelessWidget {
       title: 'FoodMood',
       // theme: ThemeData(useMaterial3: true, fontFamily: 'PlusJakartaSans'),
       // theme: lightMode,
-      theme: Provider.of<ThemeProvider>(context).themeData,
-      darkTheme: darkMode,
+
+
+      // theme: Provider.of<ThemeProvider>(context).themeData,
+      // darkTheme: darkMode,
+
+      theme: lightMode, // ไฟล์ theme.dart ของคุณ
+      darkTheme: darkMode, // ไฟล์ theme.dart ของคุณ
+      themeMode: Provider.of<ThemeProvider>(context).themeMode,
+
       home: AuthGate(),
       debugShowCheckedModeBanner: false,
     );

@@ -4,6 +4,10 @@
 **FoodMood**  
 Smart Food Selection & Mood-Based Recommendation System
 
+---
+
+## Project Preview
+<img width="8068" height="5146" alt="image" src="assets/images/mockui.png" />
 
 ---
 
