@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foodmood/auth/auth_service.dart';
+import 'package:foodmood/screens/selection/selection_page.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -17,19 +18,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final currentEmail = authService.getCurrentUserEmail();
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-        actions: [IconButton(onPressed: logout, icon: Icon(Icons.logout))],
-      ),
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body: Column(
-        children: [
-          Center(child: Text(currentEmail.toString())),
-        ],
-      ),
-    );
+    return  const FoodMoodSelectionPage();
   }
 }
