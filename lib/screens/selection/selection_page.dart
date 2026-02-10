@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:foodmood/models/mood_option.dart';
+import 'package:foodmood/services/mood_service.dart';
+import 'package:foodmood/widgets/mood_card.dart';
+import 'package:foodmood/widgets/weather_button.dart';
+import 'package:foodmood/widgets/auto_detect_button.dart';
+import 'package:foodmood/widgets/food_type_button.dart';
 
 // ไฟล์นี้สำหรับวางใน lib/screens/selection/foodmood_selection_page.dart
 
@@ -14,34 +19,8 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
   String selectedMood = 'Happy';
   String selectedWeather = 'Sunny';
   String selectedFoodType = 'Main Course';
-
-  final List<MoodOption> moods = [
-    MoodOption(
-      name: 'Happy',
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuChRixdEovk1Vi6DWgD5YTr3LOQwmP6rklTGWSvLKjG0t6FrZYP-cdy91aFOuT3nOgRbZBEyO-JoCL9w4w7h0pLMMfDoWA0A_RNxY_oWUW7WDVj2Pb9ZqiBNfdm3u4cgFvpiySoS3CUpox-InwbpH-n9y-MLJeNkj7FpDGa1dUgHvOxqkK97Nb-PF0KSZCNGgIAJkIY_O3B7MHdPYvPsOYaUEJx3Hhy2eZjwaJBNs_TAjFcRu0bHck7ADunUF_607BJrA-j0OZm20g',
-    ),
-    MoodOption(
-      name: 'Hangry',
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuCfYXsmCAkhSYGQeBOkvH-F_W2J4ecv9chtRXSD1Un9KT1IAqmFxgWGCOpRy6H44yM23f3vaQtQD0Ww-UfwUQZ-4iC9MB-wQtBOLOucIlYClyYC4Nn7re3Nj7aksm5CYUeb98iRk8zA2chq5Bo-VUEcPLNOZCtV62UA1A5FYf55OtH3ZneYQEVqhtJQuSqbV7wygnVL8Ur8uAkc-0WIhuPHupyKs4VI2CbqxBAL1pqxGSmuYAxh8o85xi3n6GLwA-Y_fiTHf1uwsbU',
-    ),
-    MoodOption(
-      name: 'Cozy',
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuCMWz3EU3c_vOQ1ATn474whf0MANTYekcTETIL__BJyQ-eG7W5BBNNMT11Kb6HpRhRz6fFMnBtjtTYEOJsGaMUxnMqaMzyeHiRullSoipqSbcfnrYPMMSWS2TT_NcX6Ot-iXFu3SqoMJAqgAH61W4cPQE5c9z83xH7ZRfPwYpvMP5BOW2-8_e6SxG6WXJnAO3f35HX4HZteV_wHcBtfuLrYTadzTkPZxXpPa1H769eM0-cCUlzh72whJ6yRS43j8Kp78xWJZpHi4d0',
-    ),
-    MoodOption(
-      name: 'Energetic',
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuDIJGruxJDRNAcgcpkxGL_hf-Dc9mmXXV-QW4nRIt5obTEN0l8l2ngpINAA_LsRd4IMHsMd345Mx65wekvakNEwmZSQ0ilzY0ITWtI-YoTMmVkhWXs69d78OfcuzKVM8L-xyVl0hUWh-iAKwPRJQsMamq6-176Uq0DNYBBzkq1sn1uyulf33cjosNngBK3guSMUrdTHksbqNj2hh8XNZ7XED6G6-v5xFtolos73o7KW7BdyqsaRSgWcgzKLy8MgB1lVt9wKC2WTCNQ',
-    ),
-    MoodOption(
-      name: 'Stressed',
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuAuHhUrHk2FVnGVJujTwNdIJs8Om_g63yqjMCOWMGUUwFF86FINjFGI5vDHyF9rTuE4Zh_Y4wBHLHv_v-U_BW_IZ3GcA7EP0VsanX-fhrUUno85n4LDa-AvBcqmiaQzBOf5eeuxOk3GgBU_XRw4JlxpKQoMqgm7RqcSy8N0PWQEadeOyZlvFOD_Nq6uGGqFJ0RCBaKas_4wp_BzD8QP75_GYY1JkHLkpfBPkoUbYK6JtuqumCl4vUxLdgB1Siyc5pvCzAJdyHN3yHg',
-    ),
-  ];
+  
+  final MoodService _moodService = MoodService();
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +33,7 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
 
     return Scaffold(
       backgroundColor: backgroundColor,
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           // Main scrollable content
@@ -127,29 +107,60 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
                 ),
 
                 // Mood selection horizontal scroll
-                SizedBox(
-                  height: 200,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                    itemCount: moods.length,
-                    itemBuilder: (context, index) {
-                      final mood = moods[index];
-                      final isSelected = selectedMood == mood.name;
-                      return _buildMoodCard(
-                        mood: mood,
-                        isSelected: isSelected,
-                        primaryColor: primaryColor,
-                        cardColor: cardColor,
-                        textColor: textColor,
-                        onTap: () {
-                          setState(() {
-                            selectedMood = mood.name;
-                          });
-                        },
+                FutureBuilder<List<MoodOption>>(
+                  future: _moodService.fetchMoods(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return SizedBox(
+                        height: 200,
+                        child: Center(
+                          child: Text(
+                            'Error loading moods',
+                            style: TextStyle(color: textColor),
+                          ),
+                        ),
                       );
-                    },
-                  ),
+                    }
+
+                    final moods = snapshot.data ?? [];
+                    
+                    if (moods.isEmpty) {
+                      return SizedBox(
+                        height: 200,
+                        child: Center(
+                          child: Text(
+                            'No moods available',
+                            style: TextStyle(color: subtextColor),
+                          ),
+                        ),
+                      );
+                    }
+
+                    return SizedBox(
+                      height: 200,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        itemCount: moods.length,
+                        itemBuilder: (context, index) {
+                          final mood = moods[index];
+                          final isSelected = selectedMood == mood.name;
+                          return MoodCard(
+                            mood: mood,
+                            isSelected: isSelected,
+                            primaryColor: primaryColor,
+                            cardColor: cardColor,
+                            textColor: textColor,
+                            onTap: () {
+                              setState(() {
+                                selectedMood = mood.name;
+                              });
+                            },
+                          );
+                        },
+                      ),
+                    );
+                  },
                 ),
 
                 const SizedBox(height: 24),
@@ -189,11 +200,39 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
                     spacing: 12,
                     runSpacing: 12,
                     children: [
-                      _buildWeatherButton('Sunny ☀️', primaryColor, cardColor, textColor),
-                      _buildWeatherButton('Rainy 🌧️', primaryColor, cardColor, textColor),
-                      _buildWeatherButton('Chilly ❄️', primaryColor, cardColor, textColor),
-                      _buildWeatherButton('Hot 🔥', primaryColor, cardColor, textColor),
-                      _buildAutoDetectButton(cardColor, textColor),
+                      WeatherButton(
+                        'Sunny ☀️',
+                        primaryColor,
+                        cardColor,
+                        textColor,
+                        isSelected: selectedWeather == 'Sunny',
+                        onTap: () => setState(() => selectedWeather = 'Sunny'),
+                      ),
+                      WeatherButton(
+                        'Rainy 🌧️',
+                        primaryColor,
+                        cardColor,
+                        textColor,
+                        isSelected: selectedWeather == 'Rainy',
+                        onTap: () => setState(() => selectedWeather = 'Rainy'),
+                      ),
+                      WeatherButton(
+                        'Chilly ❄️',
+                        primaryColor,
+                        cardColor,
+                        textColor,
+                        isSelected: selectedWeather == 'Chilly',
+                        onTap: () => setState(() => selectedWeather = 'Chilly'),
+                      ),
+                      WeatherButton(
+                        'Hot 🔥',
+                        primaryColor,
+                        cardColor,
+                        textColor,
+                        isSelected: selectedWeather == 'Hot',
+                        onTap: () => setState(() => selectedWeather = 'Hot'),
+                      ),
+                      AutoDetectButton(cardColor: cardColor, textColor: textColor),
                     ],
                   ),
                 ),
@@ -235,10 +274,38 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
                     spacing: 12,
                     runSpacing: 12,
                     children: [
-                      _buildFoodTypeButton('Main Course 🥘', primaryColor, cardColor, textColor),
-                      _buildFoodTypeButton('Snacks 🍿', primaryColor, cardColor, textColor),
-                      _buildFoodTypeButton('Drinks 🥤', primaryColor, cardColor, textColor),
-                      _buildFoodTypeButton('Fruits 🍎', primaryColor, cardColor, textColor),
+                      FoodTypeButton(
+                        'Main Course 🥘',
+                        primaryColor,
+                        cardColor,
+                        textColor,
+                        isSelected: selectedFoodType == 'Main Course',
+                        onTap: () => setState(() => selectedFoodType = 'Main Course'),
+                      ),
+                      FoodTypeButton(
+                        'Snacks 🍿',
+                        primaryColor,
+                        cardColor,
+                        textColor,
+                        isSelected: selectedFoodType == 'Snacks',
+                        onTap: () => setState(() => selectedFoodType = 'Snacks'),
+                      ),
+                      FoodTypeButton(
+                        'Drinks 🥤',
+                        primaryColor,
+                        cardColor,
+                        textColor,
+                        isSelected: selectedFoodType == 'Drinks',
+                        onTap: () => setState(() => selectedFoodType = 'Drinks'),
+                      ),
+                      FoodTypeButton(
+                        'Fruits 🍎',
+                        primaryColor,
+                        cardColor,
+                        textColor,
+                        isSelected: selectedFoodType == 'Fruits',
+                        onTap: () => setState(() => selectedFoodType = 'Fruits'),
+                      ),
                     ],
                   ),
                 ),
@@ -250,21 +317,10 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
 
           // Bottom fixed section
           Positioned(
-            bottom: 0,
+            bottom: 70,
             left: 0,
             right: 0,
             child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    backgroundColor.withOpacity(0.0),
-                    backgroundColor,
-                    backgroundColor,
-                  ],
-                ),
-              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -327,186 +383,6 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildMoodCard({
-    required MoodOption mood,
-    required bool isSelected,
-    required Color primaryColor,
-    required Color cardColor,
-    required Color textColor,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.only(right: 16),
-        child: Column(
-          children: [
-            Container(
-              width: 140,
-              height: 140,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: isSelected ? primaryColor : Colors.transparent,
-                  width: 2,
-                ),
-                boxShadow: isSelected
-                    ? [
-                        BoxShadow(
-                          color: primaryColor.withOpacity(0.2),
-                          blurRadius: 8,
-                          spreadRadius: 2,
-                        ),
-                      ]
-                    : null,
-              ),
-              child: Stack(
-                children: [
-                  // Background image
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(14),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: cardColor,
-                        image: DecorationImage(
-                          image: NetworkImage(mood.imageUrl),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Overlay
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(14),
-                      color: Colors.black.withOpacity(0.1),
-                    ),
-                  ),
-                  // Check icon
-                  if (isSelected)
-                    Positioned(
-                      bottom: 8,
-                      right: 8,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.9),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.check_circle,
-                          color: primaryColor,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              mood.name,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                color: isSelected ? primaryColor : textColor,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildWeatherButton(String text, Color primaryColor, Color cardColor, Color textColor) {
-    final isSelected = selectedWeather == text.split(' ')[0];
-    return ElevatedButton(
-      onPressed: () {
-        setState(() {
-          selectedWeather = text.split(' ')[0];
-        });
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: isSelected ? primaryColor : cardColor,
-        foregroundColor: isSelected ? Colors.white : textColor,
-        elevation: isSelected ? 4 : 0,
-        shadowColor: isSelected ? const Color(0xFFffd4a8) : null,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAutoDetectButton(Color cardColor, Color textColor) {
-    return OutlinedButton.icon(
-      onPressed: () {
-        // TODO: Implement auto-detect location
-        debugPrint('Auto-detect weather clicked');
-      },
-      icon: Icon(
-        Icons.my_location,
-        size: 20,
-        color: Colors.grey[600],
-      ),
-      label: Text(
-        'Auto-detect',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          color: textColor,
-        ),
-      ),
-      style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        side: BorderSide(
-          color: Colors.grey[400]!,
-          width: 1,
-          style: BorderStyle.solid,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFoodTypeButton(String text, Color primaryColor, Color cardColor, Color textColor) {
-    final isSelected = selectedFoodType == text.split(' ')[0] + (text.contains('Course') ? ' Course' : '');
-    return ElevatedButton(
-      onPressed: () {
-        setState(() {
-          selectedFoodType = text.split(' ')[0] + (text.contains('Course') ? ' Course' : '');
-        });
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: isSelected ? primaryColor : cardColor,
-        foregroundColor: isSelected ? Colors.white : textColor,
-        elevation: isSelected ? 4 : 0,
-        shadowColor: isSelected ? const Color(0xFFffd4a8) : null,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-        ),
       ),
     );
   }
