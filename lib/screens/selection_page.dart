@@ -6,10 +6,11 @@ import 'package:foodmood/widgets/weather_button.dart';
 import 'package:foodmood/widgets/auto_detect_button.dart';
 import 'package:foodmood/widgets/food_type_button.dart';
 
-// ไฟล์นี้สำหรับวางใน lib/screens/selection/foodmood_selection_page.dart
-
 class FoodMoodSelectionPage extends StatefulWidget {
-  const FoodMoodSelectionPage({Key? key}) : super(key: key);
+  final Function(String mood, String weather, String foodType) onSubmit;
+
+  const FoodMoodSelectionPage({Key? key, required this.onSubmit})
+    : super(key: key);
 
   @override
   State<FoodMoodSelectionPage> createState() => _FoodMoodSelectionPageState();
@@ -19,15 +20,19 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
   String selectedMood = 'Happy';
   String selectedWeather = 'Sunny';
   String selectedFoodType = 'Main Course';
-  
+
   final MoodService _moodService = MoodService();
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = const Color(0xFFf48c25);
-    final backgroundColor = isDark ? const Color(0xFF221910) : const Color(0xFFf8f7f5);
-    final cardColor = isDark ? const Color(0xFF3a2e22) : const Color(0xFFf4ede7);
+    final backgroundColor = isDark
+        ? const Color(0xFF221910)
+        : const Color(0xFFf8f7f5);
+    final cardColor = isDark
+        ? const Color(0xFF3a2e22)
+        : const Color(0xFFf4ede7);
     final textColor = isDark ? Colors.white : const Color(0xFF1c140d);
     final subtextColor = isDark ? Colors.grey[400] : Colors.grey[600];
 
@@ -43,7 +48,10 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
               children: [
                 // Header
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: backgroundColor.withOpacity(0.9),
                   ),
@@ -123,7 +131,7 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
                     }
 
                     final moods = snapshot.data ?? [];
-                    
+
                     if (moods.isEmpty) {
                       return SizedBox(
                         height: 200,
@@ -140,7 +148,10 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
                       height: 200,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
                         itemCount: moods.length,
                         itemBuilder: (context, index) {
                           final mood = moods[index];
@@ -232,7 +243,10 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
                         isSelected: selectedWeather == 'Hot',
                         onTap: () => setState(() => selectedWeather = 'Hot'),
                       ),
-                      AutoDetectButton(cardColor: cardColor, textColor: textColor),
+                      AutoDetectButton(
+                        cardColor: cardColor,
+                        textColor: textColor,
+                      ),
                     ],
                   ),
                 ),
@@ -280,7 +294,8 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
                         cardColor,
                         textColor,
                         isSelected: selectedFoodType == 'Main Course',
-                        onTap: () => setState(() => selectedFoodType = 'Main Course'),
+                        onTap: () =>
+                            setState(() => selectedFoodType = 'Main Course'),
                       ),
                       FoodTypeButton(
                         'Snacks 🍿',
@@ -288,7 +303,8 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
                         cardColor,
                         textColor,
                         isSelected: selectedFoodType == 'Snacks',
-                        onTap: () => setState(() => selectedFoodType = 'Snacks'),
+                        onTap: () =>
+                            setState(() => selectedFoodType = 'Snacks'),
                       ),
                       FoodTypeButton(
                         'Drinks 🥤',
@@ -296,7 +312,8 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
                         cardColor,
                         textColor,
                         isSelected: selectedFoodType == 'Drinks',
-                        onTap: () => setState(() => selectedFoodType = 'Drinks'),
+                        onTap: () =>
+                            setState(() => selectedFoodType = 'Drinks'),
                       ),
                       FoodTypeButton(
                         'Fruits 🍎',
@@ -304,7 +321,8 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
                         cardColor,
                         textColor,
                         isSelected: selectedFoodType == 'Fruits',
-                        onTap: () => setState(() => selectedFoodType = 'Fruits'),
+                        onTap: () =>
+                            setState(() => selectedFoodType = 'Fruits'),
                       ),
                     ],
                   ),
@@ -332,22 +350,11 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
                       height: 56,
                       child: ElevatedButton(
                         onPressed: () {
-                          // TODO: Navigate to swipe page with selected values
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => SwipePage(
-                          //       mood: selectedMood,
-                          //       weather: selectedWeather,
-                          //       foodType: selectedFoodType,
-                          //     ),
-                          //   ),
-                          // );
-                          
-                          // For now, just print selected values
-                          debugPrint('Selected Mood: $selectedMood');
-                          debugPrint('Selected Weather: $selectedWeather');
-                          debugPrint('Selected Food Type: $selectedFoodType');
+                          widget.onSubmit(
+                            selectedMood,
+                            selectedWeather,
+                            selectedFoodType,
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: primaryColor,
@@ -369,10 +376,7 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
                               ),
                             ),
                             SizedBox(width: 8),
-                            Text(
-                              '🍔',
-                              style: TextStyle(fontSize: 24),
-                            ),
+                            Text('🍔', style: TextStyle(fontSize: 24)),
                           ],
                         ),
                       ),

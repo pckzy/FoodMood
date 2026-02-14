@@ -25,7 +25,9 @@ class MoodCard extends StatelessWidget {
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.only(right: 16),
+      child: SingleChildScrollView(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 140,
@@ -118,21 +120,20 @@ class MoodCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            Flexible(
-              child: Text(
-                mood.name,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                  color: isSelected ? primaryColor : textColor,
-                ),
+            Text(
+              mood.name,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                color: isSelected ? primaryColor : textColor,
               ),
             ),
           ],
         ),
+      ),
       ),
     );
   }

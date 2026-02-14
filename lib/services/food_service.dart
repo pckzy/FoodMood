@@ -1,7 +1,7 @@
-import 'package:foodmood/models/mood_option.dart';
+import 'package:foodmood/models/food_item.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class MoodService {
+class FoodService {
   final SupabaseClient _supabase = Supabase.instance.client;
 
   String getImageUrl(String imagePath) {
@@ -19,25 +19,25 @@ class MoodService {
     }
   }
 
-  /// Fetch all moods from Supabase
-  Future<List<MoodOption>> fetchMoods() async {
+  Future<List<FoodItem>> fetchFoods() async {
     try {
       final response = await _supabase
-      .from('Moods')
-      .select();
+          .from('Foods')
+          .select();
 
       if (response.isNotEmpty) {
-        final List<MoodOption> moods = response.map((mood) {
-          final moodOption = MoodOption.fromJson(mood);
+        final List<FoodItem> foods = response.map((food) {
+          final foodItem = FoodItem.fromJson(food);
           // Convert image_url to public URL
-          final publicImageUrl = getImageUrl(moodOption.imageUrl);
-          return moodOption.copyWith(imageUrl: publicImageUrl);
+          final publicImageUrl = getImageUrl(foodItem.imageUrl);
+          return foodItem.copyWith(imageUrl: publicImageUrl);
         }).toList();
-        return moods;
+        foods.shuffle();
+        return foods;
       }
       return [];
     } catch (e) {
-      print('Error fetching moods: $e');
+      print('Error fetching foods: $e');
       rethrow;
     }
   }

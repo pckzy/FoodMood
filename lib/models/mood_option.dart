@@ -15,14 +15,6 @@ class MoodOption {
     );
   }
 
-  /// Convert MoodOption to JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'image_url': imageUrl,
-    };
-  }
-
   /// Create a copy with modified fields
   MoodOption copyWith({
     String? name,
