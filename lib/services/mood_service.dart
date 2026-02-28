@@ -1,4 +1,4 @@
-import 'package:foodmood/models/mood_option.dart';
+import 'package:foodmood/models/mood.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MoodService {
@@ -20,15 +20,13 @@ class MoodService {
   }
 
   /// Fetch all moods from Supabase
-  Future<List<MoodOption>> fetchMoods() async {
+  Future<List<Mood>> fetchMoods() async {
     try {
-      final response = await _supabase
-      .from('Moods')
-      .select();
+      final response = await _supabase.from('moods').select();
 
       if (response.isNotEmpty) {
-        final List<MoodOption> moods = response.map((mood) {
-          final moodOption = MoodOption.fromJson(mood);
+        final List<Mood> moods = response.map((mood) {
+          final moodOption = Mood.fromJson(mood);
           // Convert image_url to public URL
           final publicImageUrl = getImageUrl(moodOption.imageUrl);
           return moodOption.copyWith(imageUrl: publicImageUrl);

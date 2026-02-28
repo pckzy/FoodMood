@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:foodmood/models/mood_option.dart';
-import 'package:foodmood/services/mood_service.dart';
-import 'package:foodmood/widgets/mood_card.dart';
-import 'package:foodmood/widgets/weather_button.dart';
-import 'package:foodmood/widgets/auto_detect_button.dart';
-import 'package:foodmood/widgets/food_type_button.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:foodmood/models/mood.dart';
+import 'package:foodmood/models/weather.dart';
+import 'package:foodmood/models/food_type.dart';
+import 'package:foodmood/widgets/mood_selection_section.dart';
+import 'package:foodmood/widgets/weather_selection_section.dart';
+import 'package:foodmood/widgets/food_type_selection_section.dart';
 
 class FoodMoodSelectionPage extends StatefulWidget {
   final Function(String mood, String weather, String foodType) onSubmit;
@@ -17,11 +18,79 @@ class FoodMoodSelectionPage extends StatefulWidget {
 }
 
 class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
-  String selectedMood = 'Happy';
-  String selectedWeather = 'Sunny';
-  String selectedFoodType = 'Main Course';
+  String? selectedMood;
+  String? selectedWeather;
+  String? selectedFoodType;
 
-  final MoodService _moodService = MoodService();
+  List<Mood> _moodsList = [];
+  List<Weather> _weatherList = [];
+  List<FoodType> _foodTypeList = [];
+
+  void _showErrorDialog(String itemName) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        actionsPadding: const EdgeInsets.fromLTRB(0, 0, 16, 16),
+        title: Row(
+          children: [
+            const Icon(Icons.warning_amber_rounded, color: Colors.orange),
+            const SizedBox(width: 8),
+            Text('Missing $itemName'),
+          ],
+        ),
+        content: Text('Please select your $itemName before submitting.'),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFf48c25),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _handleSubmit() async {
+    if (selectedMood == null) {
+      _showErrorDialog('mood');
+      return;
+    } else if (selectedWeather == null) {
+      _showErrorDialog('weather');
+      return;
+    } else if (selectedFoodType == null) {
+      _showErrorDialog('food type');
+      return;
+    }
+
+    final supabase = Supabase.instance.client;
+    final user = supabase.auth.currentUser;
+
+    if (user != null) {
+      try {
+        await supabase.from('user_preferences').insert({
+          'user_id': user.id,
+          'mood_id': _moodsList.firstWhere((m) => m.name == selectedMood).id,
+          'food_type_id': _foodTypeList
+              .firstWhere((f) => f.name == selectedFoodType)
+              .id,
+          'weather_id': _weatherList
+              .firstWhere((w) => w.name == selectedWeather)
+              .id,
+        });
+      } catch (e) {
+        debugPrint('Error inserting user preferences: $e');
+      }
+    }
+
+    widget.onSubmit(selectedMood!, selectedWeather!, selectedFoodType!);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,246 +155,55 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
                   ),
                 ),
 
-                // How are you feeling?
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'How are you feeling?',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                          height: 1.2,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Select a vibe to start',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: subtextColor,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Mood selection horizontal scroll
-                FutureBuilder<List<MoodOption>>(
-                  future: _moodService.fetchMoods(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return SizedBox(
-                        height: 200,
-                        child: Center(
-                          child: Text(
-                            'Error loading moods',
-                            style: TextStyle(color: textColor),
-                          ),
-                        ),
-                      );
+                // Mood selection
+                MoodSelectionSection(
+                  selectedMood: selectedMood,
+                  onMoodSelected: (mood) => setState(() => selectedMood = mood),
+                  primaryColor: primaryColor,
+                  cardColor: cardColor,
+                  textColor: textColor,
+                  subtextColor: subtextColor!,
+                  onMoodsLoaded: (moods) {
+                    if (_moodsList.isEmpty && moods.isNotEmpty) {
+                      setState(() => _moodsList = moods);
                     }
-
-                    final moods = snapshot.data ?? [];
-
-                    if (moods.isEmpty) {
-                      return SizedBox(
-                        height: 200,
-                        child: Center(
-                          child: Text(
-                            'No moods available',
-                            style: TextStyle(color: subtextColor),
-                          ),
-                        ),
-                      );
-                    }
-
-                    return SizedBox(
-                      height: 200,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 16,
-                        ),
-                        itemCount: moods.length,
-                        itemBuilder: (context, index) {
-                          final mood = moods[index];
-                          final isSelected = selectedMood == mood.name;
-                          return MoodCard(
-                            mood: mood,
-                            isSelected: isSelected,
-                            primaryColor: primaryColor,
-                            cardColor: cardColor,
-                            textColor: textColor,
-                            onTap: () {
-                              setState(() {
-                                selectedMood = mood.name;
-                              });
-                            },
-                          );
-                        },
-                      ),
-                    );
                   },
                 ),
 
                 const SizedBox(height: 24),
 
-                // Weather outside?
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Weather outside?',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                          height: 1.2,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'We\'ll find the perfect comfort food',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: subtextColor,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Weather buttons
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    children: [
-                      WeatherButton(
-                        'Sunny ☀️',
-                        primaryColor,
-                        cardColor,
-                        textColor,
-                        isSelected: selectedWeather == 'Sunny',
-                        onTap: () => setState(() => selectedWeather = 'Sunny'),
-                      ),
-                      WeatherButton(
-                        'Rainy 🌧️',
-                        primaryColor,
-                        cardColor,
-                        textColor,
-                        isSelected: selectedWeather == 'Rainy',
-                        onTap: () => setState(() => selectedWeather = 'Rainy'),
-                      ),
-                      WeatherButton(
-                        'Chilly ❄️',
-                        primaryColor,
-                        cardColor,
-                        textColor,
-                        isSelected: selectedWeather == 'Chilly',
-                        onTap: () => setState(() => selectedWeather = 'Chilly'),
-                      ),
-                      WeatherButton(
-                        'Hot 🔥',
-                        primaryColor,
-                        cardColor,
-                        textColor,
-                        isSelected: selectedWeather == 'Hot',
-                        onTap: () => setState(() => selectedWeather = 'Hot'),
-                      ),
-                      AutoDetectButton(
-                        cardColor: cardColor,
-                        textColor: textColor,
-                      ),
-                    ],
-                  ),
+                // Weather selection
+                WeatherSelectionSection(
+                  selectedWeather: selectedWeather,
+                  onWeatherSelected: (weather) =>
+                      setState(() => selectedWeather = weather),
+                  primaryColor: primaryColor,
+                  cardColor: cardColor,
+                  textColor: textColor,
+                  subtextColor: subtextColor,
+                  onWeatherLoaded: (weathers) {
+                    if (_weatherList.isEmpty && weathers.isNotEmpty) {
+                      setState(() => _weatherList = weathers);
+                    }
+                  },
                 ),
 
                 const SizedBox(height: 24),
 
-                // Food type
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Food type',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                          height: 1.2,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Select your preferred category',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: subtextColor,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Food type buttons
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    children: [
-                      FoodTypeButton(
-                        'Main Course 🥘',
-                        primaryColor,
-                        cardColor,
-                        textColor,
-                        isSelected: selectedFoodType == 'Main Course',
-                        onTap: () =>
-                            setState(() => selectedFoodType = 'Main Course'),
-                      ),
-                      FoodTypeButton(
-                        'Snacks 🍿',
-                        primaryColor,
-                        cardColor,
-                        textColor,
-                        isSelected: selectedFoodType == 'Snacks',
-                        onTap: () =>
-                            setState(() => selectedFoodType = 'Snacks'),
-                      ),
-                      FoodTypeButton(
-                        'Drinks 🥤',
-                        primaryColor,
-                        cardColor,
-                        textColor,
-                        isSelected: selectedFoodType == 'Drinks',
-                        onTap: () =>
-                            setState(() => selectedFoodType = 'Drinks'),
-                      ),
-                      FoodTypeButton(
-                        'Fruits 🍎',
-                        primaryColor,
-                        cardColor,
-                        textColor,
-                        isSelected: selectedFoodType == 'Fruits',
-                        onTap: () =>
-                            setState(() => selectedFoodType = 'Fruits'),
-                      ),
-                    ],
-                  ),
+                // Food Type selection
+                FoodTypeSelectionSection(
+                  selectedFoodType: selectedFoodType,
+                  onFoodTypeSelected: (foodType) =>
+                      setState(() => selectedFoodType = foodType),
+                  primaryColor: primaryColor,
+                  cardColor: cardColor,
+                  textColor: textColor,
+                  subtextColor: subtextColor,
+                  onFoodTypesLoaded: (foodTypes) {
+                    if (_foodTypeList.isEmpty && foodTypes.isNotEmpty) {
+                      setState(() => _foodTypeList = foodTypes);
+                    }
+                  },
                 ),
 
                 const SizedBox(height: 200), // Space for bottom navigation
@@ -349,13 +227,7 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
                       width: double.infinity,
                       height: 56,
                       child: ElevatedButton(
-                        onPressed: () {
-                          widget.onSubmit(
-                            selectedMood,
-                            selectedWeather,
-                            selectedFoodType,
-                          );
-                        },
+                        onPressed: _handleSubmit,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: primaryColor,
                           foregroundColor: Colors.white,

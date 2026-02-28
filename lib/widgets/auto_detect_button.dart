@@ -16,11 +16,7 @@ class AutoDetectButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return OutlinedButton.icon(
       onPressed: onTap ?? () => debugPrint('Auto-detect weather clicked'),
-      icon: Icon(
-        Icons.my_location,
-        size: 20,
-        color: Colors.grey[600],
-      ),
+      icon: Icon(Icons.my_location, size: 20, color: Colors.grey[600]),
       label: Text(
         'Auto-detect',
         style: TextStyle(
@@ -36,9 +32,7 @@ class AutoDetectButton extends StatelessWidget {
           width: 1,
           style: BorderStyle.solid,
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }

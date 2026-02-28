@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:foodmood/models/mood_option.dart';
+import 'package:foodmood/models/mood.dart';
 
 class MoodCard extends StatelessWidget {
-  final MoodOption mood;
+  final Mood mood;
   final bool isSelected;
   final Color primaryColor;
   final Color cardColor;

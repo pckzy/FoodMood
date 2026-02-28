@@ -21,9 +21,7 @@ class FoodService {
 
   Future<List<FoodItem>> fetchFoods() async {
     try {
-      final response = await _supabase
-          .from('Foods')
-          .select();
+      final response = await _supabase.from('foods').select();
 
       if (response.isNotEmpty) {
         final List<FoodItem> foods = response.map((food) {
