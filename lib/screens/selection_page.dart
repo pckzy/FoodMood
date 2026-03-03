@@ -8,7 +8,7 @@ import 'package:foodmood/widgets/weather_selection_section.dart';
 import 'package:foodmood/widgets/food_type_selection_section.dart';
 
 class FoodMoodSelectionPage extends StatefulWidget {
-  final Function(String mood, String weather, String foodType) onSubmit;
+  final Function(Mood mood, Weather weather, FoodType foodType) onSubmit;
 
   const FoodMoodSelectionPage({Key? key, required this.onSubmit})
     : super(key: key);
@@ -69,27 +69,12 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
       return;
     }
 
-    final supabase = Supabase.instance.client;
-    final user = supabase.auth.currentUser;
-
-    if (user != null) {
-      try {
-        await supabase.from('user_preferences').insert({
-          'user_id': user.id,
-          'mood_id': _moodsList.firstWhere((m) => m.name == selectedMood).id,
-          'food_type_id': _foodTypeList
-              .firstWhere((f) => f.name == selectedFoodType)
-              .id,
-          'weather_id': _weatherList
-              .firstWhere((w) => w.name == selectedWeather)
-              .id,
-        });
-      } catch (e) {
-        debugPrint('Error inserting user preferences: $e');
-      }
-    }
-
-    widget.onSubmit(selectedMood!, selectedWeather!, selectedFoodType!);
+    final mood = _moodsList.firstWhere((m) => m.name == selectedMood);
+    final weather = _weatherList.firstWhere((w) => w.name == selectedWeather);
+    final foodType = _foodTypeList.firstWhere(
+      (f) => f.name == selectedFoodType,
+    );
+    widget.onSubmit(mood, weather, foodType);
   }
 
   @override

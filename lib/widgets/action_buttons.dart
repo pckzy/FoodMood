@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class ActionButtons extends StatelessWidget {
   final VoidCallback? onDislike;
   final VoidCallback? onLike;
+  final VoidCallback? onFavorite;
 
-  const ActionButtons({Key? key, this.onDislike, this.onLike})
+  const ActionButtons({Key? key, this.onDislike, this.onLike, this.onFavorite})
     : super(key: key);
 
   @override
@@ -27,15 +28,18 @@ class ActionButtons extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 32),
-          _buildActionButton(
-            icon: Icons.star_outline,
-            size: 56,
-            iconSize: 28,
-            color: Colors.blue,
-            isDark: isDark,
+          GestureDetector(
+            onTap: onFavorite,
+            child: _buildActionButton(
+              icon: Icons.star_outline,
+              size: 56,
+              iconSize: 28,
+              color: Colors.blue,
+              isDark: isDark,
+            ),
           ),
           const SizedBox(width: 32),
-          GestureDetector(onTap: onLike, child: _buildLikeButton(isDark)),
+          GestureDetector(onTap: onLike, child: _buildLikeButton()),
         ],
       ),
     );
@@ -69,7 +73,7 @@ class ActionButtons extends StatelessWidget {
     );
   }
 
-  Widget _buildLikeButton(bool isDark) {
+  Widget _buildLikeButton() {
     return Container(
       width: 64,
       height: 64,

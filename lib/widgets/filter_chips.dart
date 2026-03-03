@@ -13,23 +13,16 @@ class FilterChips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final filters = ['All', 'Recent', 'Nearest', 'Desserts', 'Favorites'];
+    final filters = ['All', 'Recent', 'Snacks', 'Favorites'];
 
     return Container(
-      decoration: BoxDecoration(
-        color: isDark
-            ? const Color(0xFF221910).withOpacity(0.95)
-            : const Color(0xFFf8f7f5).withOpacity(0.95),
-        border: Border(
-          bottom: BorderSide(
-            color: isDark ? const Color(0xFF3a2e26) : const Color(0xFFf4ede7),
-          ),
-        ),
-      ),
+      color: isDark
+          ? const Color(0xFF221910).withOpacity(0.95)
+          : const Color(0xFFf8f7f5).withOpacity(0.95),
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
         child: Row(
           children: filters.map((filter) {
             final isSelected = selectedFilter == filter;
@@ -70,7 +63,9 @@ class FilterChips extends StatelessWidget {
             style: TextStyle(
               color: isSelected
                   ? (isDark ? const Color(0xFF1c140d) : Colors.white)
-                  : (isDark ? const Color(0xFFe8e0d9) : const Color(0xFF1c140d)),
+                  : (isDark
+                        ? const Color(0xFFe8e0d9)
+                        : const Color(0xFF1c140d)),
               fontSize: 12,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             ),

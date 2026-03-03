@@ -1,73 +1,60 @@
 class FoodItem {
+  final int? id;
   final String name;
   final String imageUrl;
-  final String priceLevel;
-  final List<String> tags;
+  final int price;
+  final String description;
   final int? typeId;
   final int? weatherId;
+  final bool halal;
+  final int spicyLevel;
 
   FoodItem({
+    this.id,
     required this.name,
     required this.imageUrl,
-    required this.priceLevel,
-    required this.tags,
+    required this.price,
+    required this.description,
     this.typeId,
     this.weatherId,
+    this.halal = false,
+    this.spicyLevel = 0,
   });
 
   factory FoodItem.fromJson(Map<String, dynamic> json) {
-    // Convert price to priceLevel
-    final price = json['price'];
-    String priceLevel = '\฿';
-    if (price != null) {
-      if (price is num) {
-        if (price > 300) {
-          priceLevel = '\฿\฿\฿';
-        } else if (price > 100) {
-          priceLevel = '\฿\฿';
-        }
-      } else if (price is String) {
-        // If price comes as string like '150'
-        final p = int.tryParse(price);
-        if (p != null) {
-          if (p > 300)
-            priceLevel = '\฿\฿\฿';
-          else if (p > 100)
-            priceLevel = '\฿\฿';
-        }
-      }
-    }
-
-    // Convert description to tags
-    List<String> tags = [];
-    if (json['description'] != null) {
-      tags.add(json['description'].toString());
-    }
-
     return FoodItem(
+      id: json['id'] as int?,
       name: json['name'] as String? ?? 'Unknown',
       imageUrl: json['image_url'] as String? ?? '',
-      priceLevel: priceLevel, // Logic to determine price level
-      tags: tags,
+      price: json['price'] as int? ?? 0,
+      description: json['description'] as String? ?? '',
       typeId: json['type_id'] as int?,
       weatherId: json['weather_id'] as int?,
+      halal: json['halal'] as bool? ?? false,
+      spicyLevel: json['spicy_level'] as int? ?? 0,
     );
   }
   FoodItem copyWith({
+    int? id,
     String? name,
     String? imageUrl,
-    String? priceLevel,
-    List<String>? tags,
+    int? price,
+    String? description,
     int? typeId,
     int? weatherId,
+    bool? halal,
+    int? spicyLevel,
   }) {
     return FoodItem(
+      id: id ?? this.id,
       name: name ?? this.name,
       imageUrl: imageUrl ?? this.imageUrl,
-      priceLevel: priceLevel ?? this.priceLevel,
-      tags: tags ?? this.tags,
+      price: price ?? this.price,
+      description: description ?? this.description,
       typeId: typeId ?? this.typeId,
       weatherId: weatherId ?? this.weatherId,
+      halal: halal ?? this.halal,
+      spicyLevel: spicyLevel ?? this.spicyLevel,
     );
   }
 }

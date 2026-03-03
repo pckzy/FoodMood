@@ -7,11 +7,14 @@ class SwipeCardStack extends StatefulWidget {
   final VoidCallback? onStackFinished;
   final VoidCallback? onReset;
 
+  final Function(FoodItem)? onSwipeRight;
+
   const SwipeCardStack({
     Key? key,
     required this.foodItems,
     this.onStackFinished,
     this.onReset,
+    this.onSwipeRight,
   }) : super(key: key);
 
   @override
@@ -25,7 +28,17 @@ class SwipeCardStackState extends State<SwipeCardStack> {
   void swipeLeft() => _cardKey.currentState?.swipeLeft();
   void swipeRight() => _cardKey.currentState?.swipeRight();
 
+  void fadeOutCurrentCard(VoidCallback onComplete) {
+    _cardKey.currentState?.fadeOut(() {
+      _onSwipe(false); // Increment index but don't count as like
+      onComplete();
+    });
+  }
+
   void _onSwipe(bool isLike) {
+    if (isLike && widget.onSwipeRight != null) {
+      widget.onSwipeRight!(widget.foodItems[currentIndex]);
+    }
     setState(() {
       currentIndex++;
       if (currentIndex >= widget.foodItems.length) {

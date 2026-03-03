@@ -11,7 +11,7 @@ class WeatherService {
           .from('weathers')
           .select()
           .order('id', ascending: true);
-  
+
       if (response.isNotEmpty) {
         final List<Weather> weatherOptions = response.map((w) {
           return Weather.fromJson(w);

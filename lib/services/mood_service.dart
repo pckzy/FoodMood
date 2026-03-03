@@ -28,7 +28,7 @@ class MoodService {
         final List<Mood> moods = response.map((mood) {
           final moodOption = Mood.fromJson(mood);
           // Convert image_url to public URL
-          final publicImageUrl = getImageUrl(moodOption.imageUrl);
+          final publicImageUrl = getImageUrl("moods/${moodOption.imageUrl}");
           return moodOption.copyWith(imageUrl: publicImageUrl);
         }).toList();
         return moods;

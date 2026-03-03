@@ -95,83 +95,90 @@ class FoodCardView extends StatelessWidget {
         children: [
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFf48c25),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFFf48c25).withOpacity(0.3),
-                      blurRadius: 8,
+              if (foodItem.halal)
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.green.withOpacity(0.2),
+                        blurRadius: 4,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  child: ClipOval(
+                    child: Image.asset(
+                      'assets/images/halal_logo.png',
+                      fit: BoxFit.cover,
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            foodItem.name,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 28,
-              fontWeight: FontWeight.w800,
-              height: 1.2,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              Container(
-                width: 4,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[400],
-                  shape: BoxShape.circle,
-                ),
-              ),
               const SizedBox(width: 8),
-              Text(
-                foodItem.priceLevel,
-                style: TextStyle(
-                  color: Colors.grey[200],
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+              if (foodItem.spicyLevel > 0)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.red.withOpacity(0.2)),
+                  ),
+                  child: Text(
+                    '🔥' * foodItem.spicyLevel,
+                    style: const TextStyle(fontSize: 12),
+                  ),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: 16),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: foodItem.tags.map((tag) => _buildTag(tag)).toList(),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.35),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.white.withOpacity(0.1)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  foodItem.name,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 28,
+                    fontWeight: FontWeight.w800,
+                    height: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  foodItem.description,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  '≈ ${foodItem.price}฿',
+                  style: TextStyle(
+                    color: Colors.grey[500],
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildTag(String tag) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
-      ),
-      child: Text(
-        tag.toUpperCase(),
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.8,
-        ),
       ),
     );
   }
@@ -201,6 +208,7 @@ class FoodCardState extends State<FoodCard>
   Offset position = Offset.zero;
   bool isDragging = false;
   late AnimationController _controller;
+  double _opacity = 1.0;
 
   void swipeLeft() => _animateCardOff(false);
   void swipeRight() => _animateCardOff(true);
@@ -290,6 +298,36 @@ class FoodCardState extends State<FoodCard>
     });
   }
 
+  void fadeOut(VoidCallback onComplete) {
+    _controller.duration = const Duration(milliseconds: 600);
+    final animation = Tween<double>(
+      begin: 1.0,
+      end: 0.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+
+    void listener() {
+      setState(() {
+        _opacity = animation.value;
+      });
+    }
+
+    animation.addListener(listener);
+
+    _controller.forward(from: 0).then((_) {
+      animation.removeListener(listener);
+      onComplete();
+      // Reset opacity for the next card that will reuse this state if applicable
+      // though in SwipeCardStack we usually increment index and a new FoodCard is built.
+      setState(() {
+        _opacity = 1.0;
+      });
+      _controller.reset();
+      _controller.duration = const Duration(
+        milliseconds: 400,
+      ); // Reset to default
+    });
+  }
+
   void _resetCard() {
     final animation = Tween<Offset>(begin: position, end: Offset.zero).animate(
       CurvedAnimation(
@@ -347,43 +385,49 @@ class FoodCardState extends State<FoodCard>
       onPanStart: _onPanStart,
       onPanUpdate: _onPanUpdate,
       onPanEnd: _onPanEnd,
-      child: Transform.translate(
-        offset: position,
-        child: Transform.rotate(
-          angle: angle,
-          child: Stack(
-            children: [
-              FoodCardView(
-                foodItem: widget.foodItem,
-                width: widget.width,
-                height: widget.height,
-              ),
-              // Like/Dislike indicators
-              if (position.dx > 0)
-                Positioned(
-                  top: 32,
-                  left: 32,
-                  child: Transform.rotate(
-                    angle: -0.2,
-                    child: Opacity(
-                      opacity: likeOpacity,
-                      child: _buildSwipeIndicator(Icons.favorite, Colors.green),
+      child: Opacity(
+        opacity: _opacity,
+        child: Transform.translate(
+          offset: position,
+          child: Transform.rotate(
+            angle: angle,
+            child: Stack(
+              children: [
+                FoodCardView(
+                  foodItem: widget.foodItem,
+                  width: widget.width,
+                  height: widget.height,
+                ),
+                // Like/Dislike indicators
+                if (position.dx > 0)
+                  Positioned(
+                    top: 32,
+                    left: 32,
+                    child: Transform.rotate(
+                      angle: -0.2,
+                      child: Opacity(
+                        opacity: likeOpacity,
+                        child: _buildSwipeIndicator(
+                          Icons.favorite,
+                          Colors.green,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              if (position.dx < 0)
-                Positioned(
-                  top: 32,
-                  right: 32,
-                  child: Transform.rotate(
-                    angle: 0.2,
-                    child: Opacity(
-                      opacity: dislikeOpacity,
-                      child: _buildSwipeIndicator(Icons.close, Colors.red),
+                if (position.dx < 0)
+                  Positioned(
+                    top: 32,
+                    right: 32,
+                    child: Transform.rotate(
+                      angle: 0.2,
+                      child: Opacity(
+                        opacity: dislikeOpacity,
+                        child: _buildSwipeIndicator(Icons.close, Colors.red),
+                      ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

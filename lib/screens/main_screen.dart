@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:foodmood/models/mood.dart';
+import 'package:foodmood/models/weather.dart';
+import 'package:foodmood/models/food_type.dart';
 import 'package:foodmood/screens/selection_page.dart';
 import 'package:foodmood/screens/setting_screen.dart';
-import 'package:foodmood/screens/matches_screen.dart';
+import 'package:foodmood/screens/match_history_screen.dart';
 import 'package:foodmood/widgets/bottom_navigation.dart';
 import 'package:foodmood/screens/home_screen.dart';
 
@@ -19,11 +22,11 @@ class _MainScreenState extends State<MainScreen> {
 
   // Selection state
   bool _isSelectionComplete = false;
-  String _selectedMood = '';
-  String _selectedWeather = '';
-  String _selectedFoodType = '';
+  Mood? _selectedMood;
+  Weather? _selectedWeather;
+  FoodType? _selectedFoodType;
 
-  void _onFoodMoodSelected(String mood, String weather, String foodType) {
+  void _onFoodMoodSelected(Mood mood, Weather weather, FoodType foodType) {
     setState(() {
       _selectedMood = mood;
       _selectedWeather = weather;
@@ -65,23 +68,22 @@ class _MainScreenState extends State<MainScreen> {
                 // 1. Home Tab: Toggle between Selection and Result
                 _isSelectionComplete
                     ? HomeScreen(
-                        mood: _selectedMood,
-                        weather: _selectedWeather,
-                        foodType: _selectedFoodType,
+                        mood: _selectedMood!,
+                        weather: _selectedWeather!,
+                        foodType: _selectedFoodType!,
                         onReset: () {
-                          setState(() {
-                            _isSelectionComplete = false;
-                          });
+                          setState(() => _isSelectionComplete = false);
                         },
                         onProfileTap: () {
-                          setState(() {
-                            _currentIndex = 2; // Switch to Settings tab
-                          });
+                          setState(() => _currentIndex = 2);
+                        },
+                        onMatchesTap: () {
+                          setState(() => _currentIndex = 1);
                         },
                       )
                     : FoodMoodSelectionPage(onSubmit: _onFoodMoodSelected),
 
-                const MatchesScreen(),
+                MatchHistoryScreen(isActive: _currentIndex == 1),
                 // 2. แทนที่จะใส่ SettingScreen() ตรงๆ ให้ใส่ Navigator ครอบไว้
                 Navigator(
                   key: settingsNavigatorKey,

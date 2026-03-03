@@ -19,15 +19,50 @@ class FoodService {
     }
   }
 
-  Future<List<FoodItem>> fetchFoods() async {
+  Future<List<FoodItem>> fetchFoods({
+    required int moodId,
+    required int weatherId,
+    required int foodTypeId,
+  }) async {
     try {
-      final response = await _supabase.from('foods').select();
+      final user = _supabase.auth.currentUser;
+      List<int> matchedItem = [];
+
+      // Fetch already matched food IDs for this user
+      if (user != null) {
+        final matchesResponse = await _supabase
+            .from('matches')
+            .select('food_id')
+            .eq('user_id', user.id);
+
+        if (matchesResponse.isNotEmpty) {
+          matchedItem = (matchesResponse as List)
+              .map((m) => m['food_id'] as int)
+              .toList();
+        }
+      }
+
+      var query = _supabase
+          .from('foods')
+          .select(
+            '*, foods_moods!inner(mood_id), foods_weathers!inner(weather_id)',
+          )
+          .eq('type_id', foodTypeId)
+          .eq('foods_moods.mood_id', moodId)
+          .eq('foods_weathers.weather_id', weatherId);
+
+      // Exclude matched foods if any exist
+      if (matchedItem.isNotEmpty) {
+        query = query.not('id', 'in', matchedItem);
+      }
+
+      final response = await query;
 
       if (response.isNotEmpty) {
         final List<FoodItem> foods = response.map((food) {
           final foodItem = FoodItem.fromJson(food);
           // Convert image_url to public URL
-          final publicImageUrl = getImageUrl(foodItem.imageUrl);
+          final publicImageUrl = getImageUrl("foods/${foodItem.imageUrl}");
           return foodItem.copyWith(imageUrl: publicImageUrl);
         }).toList();
         foods.shuffle();
