@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:foodmood/models/mood.dart';
 import 'package:foodmood/models/weather.dart';
 import 'package:foodmood/models/food_type.dart';
@@ -71,9 +70,15 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
 
     final mood = _moodsList.firstWhere((m) => m.name == selectedMood);
     final weather = _weatherList.firstWhere((w) => w.name == selectedWeather);
-    final foodType = _foodTypeList.firstWhere(
-      (f) => f.name == selectedFoodType,
-    );
+
+    FoodType foodType;
+    
+    if (selectedFoodType == 'All') {
+      foodType = FoodType(id: -1, name: 'All');
+    } else {
+      foodType = _foodTypeList.firstWhere((f) => f.name == selectedFoodType);
+    }
+
     widget.onSubmit(mood, weather, foodType);
   }
 

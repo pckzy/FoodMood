@@ -9,6 +9,7 @@ import 'package:foodmood/widgets/action_buttons.dart';
 import 'package:foodmood/models/food_item.dart';
 import 'package:foodmood/services/food_service.dart';
 import 'package:foodmood/services/match_service.dart';
+import 'package:foodmood/services/blacklist_service.dart';
 import 'package:foodmood/widgets/match_overlay.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -36,10 +37,106 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final FoodService _foodService = FoodService();
   final MatchService _matchService = MatchService();
+  final BlacklistService _blacklistService = BlacklistService();
   List<FoodItem> _foodItems = [];
   bool _isLoading = true;
   bool _isStackFinished = false;
   FoodItem? _matchedItem;
+
+  void _showInfoPopup(FoodItem foodItem) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? const Color(0xFF2c2219)
+              : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              foodItem.name,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 32),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _handleBlacklist(foodItem);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red[50],
+                  foregroundColor: Colors.red,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                icon: const Icon(Icons.block),
+                label: const Text(
+                  'Add to Blacklist',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Close'),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _handleBlacklist(FoodItem foodItem) async {
+    if (foodItem.id != null) {
+      try {
+        await _blacklistService.addToBlacklist(foodItem.id!);
+        if (mounted) {
+          setState(() {
+            _NotificationText = '🚫  ${foodItem.name} blacklisted';
+            _showNotification = true;
+          });
+          _stackKey.currentState?.swipeLeft();
+
+          Future.delayed(const Duration(seconds: 3), () {
+            if (mounted) {
+              setState(() => _showNotification = false);
+            }
+          });
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to add to blacklist')),
+          );
+        }
+      }
+    }
+  }
+
   final GlobalKey<SwipeCardStackState> _stackKey =
       GlobalKey<SwipeCardStackState>();
   DateTime? _lastClickTime;
@@ -65,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final foods = await _foodService.fetchFoods(
       moodId: widget.mood.id,
       weatherId: widget.weather.id,
-      foodTypeId: widget.foodType.id,
+      foodTypeId: widget.foodType.id == -1 ? null : widget.foodType.id,
     );
     if (mounted) {
       setState(() {
@@ -75,8 +172,8 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  bool _showFavoriteNotification = false;
-  String _favoriteNotificationText = '';
+  bool _showNotification = false;
+  String _NotificationText = '';
 
   void _handleMatch(FoodItem foodItem) {
     if (foodItem.id != null) {
@@ -93,13 +190,13 @@ class _HomeScreenState extends State<HomeScreen> {
       _stackKey.currentState?.fadeOutCurrentCard(() {});
 
       setState(() {
-        _favoriteNotificationText = 'Added ${foodItem.name} to favorites!';
-        _showFavoriteNotification = true;
+        _NotificationText = '⭐ Added ${foodItem.name} to favorites!';
+        _showNotification = true;
       });
 
       Future.delayed(const Duration(seconds: 3), () {
         if (mounted) {
-          setState(() => _showFavoriteNotification = false);
+          setState(() => _showNotification = false);
         }
       });
     }
@@ -137,6 +234,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           foodItems: _foodItems,
                           onReset: widget.onReset,
                           onSwipeRight: _handleMatch,
+                          onInfo: _showInfoPopup,
                           onStackFinished: () {
                             setState(() {
                               _isStackFinished = true;
@@ -167,8 +265,8 @@ class _HomeScreenState extends State<HomeScreen> {
           // Top Notification Bar
           AnimatedPositioned(
             duration: const Duration(milliseconds: 500),
-            curve: Curves.easeOutBack,
-            top: _showFavoriteNotification
+            curve: Curves.easeInOut,
+            top: _showNotification
                 ? MediaQuery.of(context).padding.top + 10
                 : -100,
             left: 16,
@@ -176,7 +274,9 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: const Color(0xFF1c140d),
+                color: isDark
+                    ? const Color(0xFFf4ede7)
+                    : const Color(0xFF3a2e22),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
@@ -186,21 +286,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-              child: Row(
-                children: [
-                  const Icon(Icons.star, color: Colors.blue, size: 24),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      _favoriteNotificationText,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
+              child: Text(
+                _NotificationText,
+                style: TextStyle(
+                  color: isDark
+                      ? const Color(0xFF221910)
+                      : const Color(0xFFf8f7f5),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),

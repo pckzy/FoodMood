@@ -1,15 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:foodmood/screens/blacklist_screen.dart';
+import 'package:foodmood/services/blacklist_service.dart';
 import 'package:foodmood/widgets/setting_groupitem.dart';
 
 class SettingPreference extends StatefulWidget {
-  const SettingPreference({super.key});
+  final bool isActive;
+  const SettingPreference({super.key, this.isActive = false});
 
   @override
   State<SettingPreference> createState() => _SettingPreferenceState();
 }
 
 class _SettingPreferenceState extends State<SettingPreference> {
+  final BlacklistService _blacklistService = BlacklistService();
+  int _blacklistCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBlacklistCount();
+  }
+
+  @override
+  void didUpdateWidget(SettingPreference oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Refresh count when screen becomes active
+    if (widget.isActive && !oldWidget.isActive) {
+      _loadBlacklistCount();
+    }
+  }
+
+  Future<void> _loadBlacklistCount() async {
+    final list = await _blacklistService.fetchBlacklistedFoods();
+    print('Loaded blacklist count: ${list.length}');
+    if (mounted) {
+      setState(() {
+        _blacklistCount = list.length;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -53,21 +83,20 @@ class _SettingPreferenceState extends State<SettingPreference> {
                   position: SettingItemPosition.first,
                   // onTap: () {},
                 ),
-                // Divider(height: 1, color: Color(0xFFF1F5F9)),
                 SettingGroupItem(
                   icon: Icons.block,
                   title: 'Blacklist Management',
-                  value: '2 Items',
+                  value: '$_blacklistCount Items',
                   position: SettingItemPosition.middle,
-                  onTap: () {
-                    Navigator.of(context).push(
+                  onTap: () async {
+                    await Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => const BlacklistScreen(),
                       ),
                     );
+                    _loadBlacklistCount(); // Refresh count after returning
                   },
                 ),
-                // Divider(height: 1, color: Color(0xFFF1F5F9)),
                 SettingGroupItem(
                   icon: Icons.restaurant_menu,
                   title: 'Dietary Restrictions',

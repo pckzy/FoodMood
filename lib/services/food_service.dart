@@ -22,23 +22,35 @@ class FoodService {
   Future<List<FoodItem>> fetchFoods({
     required int moodId,
     required int weatherId,
-    required int foodTypeId,
+    int? foodTypeId,
   }) async {
     try {
       final user = _supabase.auth.currentUser;
-      List<int> matchedItem = [];
+      List<int> excludedItems = [];
 
-      // Fetch already matched food IDs for this user
       if (user != null) {
+        // Fetch already matched food IDs
         final matchesResponse = await _supabase
             .from('matches')
             .select('food_id')
             .eq('user_id', user.id);
 
         if (matchesResponse.isNotEmpty) {
-          matchedItem = (matchesResponse as List)
-              .map((m) => m['food_id'] as int)
-              .toList();
+          excludedItems.addAll(
+            (matchesResponse as List).map((m) => m['food_id'] as int),
+          );
+        }
+
+        // Fetch blacklisted food IDs
+        final blacklistResponse = await _supabase
+            .from('blacklist')
+            .select('food_id')
+            .eq('user_id', user.id);
+
+        if (blacklistResponse.isNotEmpty) {
+          excludedItems.addAll(
+            (blacklistResponse as List).map((m) => m['food_id'] as int),
+          );
         }
       }
 
@@ -47,13 +59,17 @@ class FoodService {
           .select(
             '*, foods_moods!inner(mood_id), foods_weathers!inner(weather_id)',
           )
-          .eq('type_id', foodTypeId)
           .eq('foods_moods.mood_id', moodId)
           .eq('foods_weathers.weather_id', weatherId);
 
-      // Exclude matched foods if any exist
-      if (matchedItem.isNotEmpty) {
-        query = query.not('id', 'in', matchedItem);
+      // Apply food type filter only if it's not null
+      if (foodTypeId != null) {
+        query = query.eq('type_id', foodTypeId);
+      }
+
+      // Exclude matched and blacklisted foods
+      if (excludedItems.isNotEmpty) {
+        query = query.not('id', 'in', excludedItems);
       }
 
       final response = await query;

@@ -6,7 +6,8 @@ import 'package:foodmood/widgets/setting_logout.dart';
 import 'package:foodmood/widgets/setting_preference.dart';
 
 class SettingScreen extends StatefulWidget {
-  const SettingScreen({super.key});
+  final bool isActive;
+  const SettingScreen({super.key, this.isActive = false});
 
   @override
   State<SettingScreen> createState() => _SettingScreenState();
@@ -35,7 +36,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   SettingAppearance(),
 
                   // Preference
-                  SettingPreference(),
+                  SettingPreference(isActive: widget.isActive),
                 ],
               ),
             ),

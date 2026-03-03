@@ -89,7 +89,8 @@ class _MainScreenState extends State<MainScreen> {
                   key: settingsNavigatorKey,
                   onGenerateRoute: (routeSettings) {
                     return MaterialPageRoute(
-                      builder: (context) => const SettingScreen(),
+                      builder: (context) =>
+                          SettingScreen(isActive: _currentIndex == 2),
                     );
                   },
                 ),

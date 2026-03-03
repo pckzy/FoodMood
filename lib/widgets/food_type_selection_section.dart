@@ -99,18 +99,30 @@ class _FoodTypeSelectionSectionState extends State<FoodTypeSelectionSection> {
               child: Wrap(
                 spacing: 12,
                 runSpacing: 12,
-                children: foodTypes.map((foodType) {
-                  return FoodTypeButton(
-                    foodType.name,
+                children: [
+                  ...foodTypes.map((foodType) {
+                    return FoodTypeButton(
+                      foodType.name,
+                      widget.primaryColor,
+                      widget.cardColor,
+                      widget.textColor,
+                      isSelected: widget.selectedFoodType == foodType.name,
+                      onTap: () {
+                        widget.onFoodTypeSelected(foodType.name);
+                      },
+                    );
+                  }).toList(),
+                  FoodTypeButton(
+                    'All',
                     widget.primaryColor,
                     widget.cardColor,
                     widget.textColor,
-                    isSelected: widget.selectedFoodType == foodType.name,
+                    isSelected: widget.selectedFoodType == 'All',
                     onTap: () {
-                      widget.onFoodTypeSelected(foodType.name);
+                      widget.onFoodTypeSelected('All');
                     },
-                  );
-                }).toList(),
+                  ),
+                ],
               ),
             );
           },

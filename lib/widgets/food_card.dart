@@ -6,12 +6,14 @@ class FoodCardView extends StatelessWidget {
   final FoodItem foodItem;
   final double? width;
   final double? height;
+  final VoidCallback? onInfo;
 
   const FoodCardView({
     Key? key,
     required this.foodItem,
     this.width,
     this.height,
+    this.onInfo,
   }) : super(key: key);
 
   @override
@@ -62,7 +64,11 @@ class FoodCardView extends StatelessWidget {
             ),
           ),
           // Info button
-          Positioned(top: 16, right: 16, child: _buildInfoButton()),
+          Positioned(
+            top: 16,
+            right: 16,
+            child: GestureDetector(onTap: onInfo, child: _buildInfoButton()),
+          ),
           // Content
           Positioned(bottom: 0, left: 0, right: 0, child: _buildCardContent()),
         ],
@@ -100,11 +106,10 @@ class FoodCardView extends StatelessWidget {
                   width: 28,
                   height: 28,
                   decoration: BoxDecoration(
-                    color: Colors.white,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.green.withOpacity(0.2),
+                        color: Colors.yellow.withOpacity(0.2),
                         blurRadius: 4,
                         spreadRadius: 1,
                       ),
@@ -190,6 +195,7 @@ class FoodCard extends StatefulWidget {
   final Function(bool isLike) onSwipe;
   final double? width;
   final double? height;
+  final VoidCallback? onInfo;
 
   const FoodCard({
     Key? key,
@@ -197,6 +203,7 @@ class FoodCard extends StatefulWidget {
     required this.onSwipe,
     this.width,
     this.height,
+    this.onInfo,
   }) : super(key: key);
 
   @override
@@ -397,6 +404,7 @@ class FoodCardState extends State<FoodCard>
                   foodItem: widget.foodItem,
                   width: widget.width,
                   height: widget.height,
+                  onInfo: widget.onInfo,
                 ),
                 // Like/Dislike indicators
                 if (position.dx > 0)

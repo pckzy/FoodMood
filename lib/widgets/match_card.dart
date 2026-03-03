@@ -18,16 +18,14 @@ class _MatchCardState extends State<MatchCard> {
         .replaceAll(RegExp(r'[^\x00-\x7F\u0E00-\u0E7F\s]'), '')
         .trim()
         .toLowerCase()) {
-      case 'main course':
-        return Colors.black.withOpacity(0.6);
       case 'snack':
-        return const Color(0xFFF4B400).withOpacity(0.6);
+        return const Color(0xFFF4B400).withOpacity(0.8);
       case 'drink':
-        return const Color(0xFF4285F4).withOpacity(0.6);
+        return const Color(0xFF4285F4).withOpacity(0.8);
       case 'fruit':
-        return const Color(0xFF34A853).withOpacity(0.6);
+        return const Color(0xFF34A853).withOpacity(0.8);
       default:
-        return Colors.black.withOpacity(0.6);
+        return Colors.black;
     }
   }
 

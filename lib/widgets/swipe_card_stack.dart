@@ -8,6 +8,7 @@ class SwipeCardStack extends StatefulWidget {
   final VoidCallback? onReset;
 
   final Function(FoodItem)? onSwipeRight;
+  final Function(FoodItem)? onInfo;
 
   const SwipeCardStack({
     Key? key,
@@ -15,6 +16,7 @@ class SwipeCardStack extends StatefulWidget {
     this.onStackFinished,
     this.onReset,
     this.onSwipeRight,
+    this.onInfo,
   }) : super(key: key);
 
   @override
@@ -101,6 +103,11 @@ class SwipeCardStackState extends State<SwipeCardStack> {
               key: _cardKey,
               foodItem: widget.foodItems[currentIndex],
               onSwipe: _onSwipe,
+              onInfo: () {
+                if (widget.onInfo != null) {
+                  widget.onInfo!(widget.foodItems[currentIndex]);
+                }
+              },
               width: cardWidth,
               height: cardHeight,
             ),
