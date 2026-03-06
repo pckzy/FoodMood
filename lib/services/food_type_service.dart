@@ -12,6 +12,8 @@ class FoodTypeService {
           .select()
           .order('id', ascending: true);
 
+      print("Load food types...");
+
       if (response.isNotEmpty) {
         final List<FoodType> foodTypes = response.map((f) {
           return FoodType.fromJson(f);

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:foodmood/models/mood.dart';
 import 'package:foodmood/models/weather.dart';
 import 'package:foodmood/models/food_type.dart';
-import 'package:foodmood/widgets/custom_app_bar.dart';
+import 'package:foodmood/widgets/home_header.dart';
 import 'package:foodmood/widgets/mood_chip.dart';
 import 'package:foodmood/widgets/swipe_card_stack.dart';
 import 'package:foodmood/widgets/action_buttons.dart';
@@ -21,14 +21,14 @@ class HomeScreen extends StatefulWidget {
   final VoidCallback? onMatchesTap;
 
   const HomeScreen({
-    Key? key,
+    super.key,
     required this.mood,
     required this.weather,
     required this.foodType,
     this.onReset,
     this.onProfileTap,
     this.onMatchesTap,
-  }) : super(key: key);
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -217,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               children: [
                 const SizedBox(height: 12),
-                CustomAppBar(
+                HomeHeader(
                   onTuneTap: widget.onReset,
                   onProfileTap: widget.onProfileTap,
                 ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:foodmood/models/weather.dart';
 import 'package:foodmood/services/weather_service.dart';
 import 'package:foodmood/widgets/weather_button.dart';
-import 'package:foodmood/widgets/auto_detect_button.dart';
 
 class WeatherSelectionSection extends StatefulWidget {
   final String? selectedWeather;
@@ -113,10 +112,6 @@ class _WeatherSelectionSectionState extends State<WeatherSelectionSection> {
                       },
                     );
                   }).toList(),
-                  AutoDetectButton(
-                    cardColor: widget.cardColor,
-                    textColor: widget.textColor,
-                  ),
                 ],
               ),
             );

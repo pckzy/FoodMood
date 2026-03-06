@@ -62,6 +62,8 @@ class FoodService {
           .eq('foods_moods.mood_id', moodId)
           .eq('foods_weathers.weather_id', weatherId);
 
+      print("Load foods...");
+
       // Apply food type filter only if it's not null
       if (foodTypeId != null) {
         query = query.eq('type_id', foodTypeId);

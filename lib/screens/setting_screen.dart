@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:foodmood/auth/auth_service.dart';
-import 'package:foodmood/widgets/custom_header.dart';
 import 'package:foodmood/widgets/setting_appearance.dart';
 import 'package:foodmood/widgets/setting_logout.dart';
 import 'package:foodmood/widgets/setting_preference.dart';
@@ -27,7 +26,28 @@ class _SettingScreenState extends State<SettingScreen> {
               child: Column(
                 children: [
                   // Header
-                  CustomHeader(headerTxt: 'Settings'),
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    decoration: BoxDecoration(
+                      color: colorScheme.surface,
+                      border: Border(
+                        bottom: BorderSide(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      'Settings',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.primary,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ),
 
                   // Profile
                   _ProfileSection(),

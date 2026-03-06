@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 class MatchHeader extends StatelessWidget {
   final VoidCallback onManageTap;
+  final bool isManageMode;
 
   const MatchHeader({
     Key? key,
     required this.onManageTap,
+    this.isManageMode = false,
   }) : super(key: key);
 
   @override
@@ -52,9 +54,9 @@ class MatchHeader extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     color: Colors.transparent,
                   ),
-                  child: const Text(
-                    'Manage',
-                    style: TextStyle(
+                  child: Text(
+                    isManageMode ? 'Cancel' : 'Manage',
+                    style: const TextStyle(
                       color: Color(0xFFf48c25),
                       fontSize: 14,
                       fontWeight: FontWeight.bold,

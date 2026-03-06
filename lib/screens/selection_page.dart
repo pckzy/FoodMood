@@ -8,9 +8,13 @@ import 'package:foodmood/widgets/food_type_selection_section.dart';
 
 class FoodMoodSelectionPage extends StatefulWidget {
   final Function(Mood mood, Weather weather, FoodType foodType) onSubmit;
+  final VoidCallback? onProfileTap;
 
-  const FoodMoodSelectionPage({Key? key, required this.onSubmit})
-    : super(key: key);
+  const FoodMoodSelectionPage({
+    super.key,
+    required this.onSubmit,
+    this.onProfileTap,
+  });
 
   @override
   State<FoodMoodSelectionPage> createState() => _FoodMoodSelectionPageState();
@@ -72,7 +76,7 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
     final weather = _weatherList.firstWhere((w) => w.name == selectedWeather);
 
     FoodType foodType;
-    
+
     if (selectedFoodType == 'All') {
       foodType = FoodType(id: -1, name: 'All');
     } else {
@@ -127,17 +131,20 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
                             color: textColor,
                           ),
                         ),
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: cardColor,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.account_circle_outlined,
-                            color: textColor,
-                            size: 24,
+                        GestureDetector(
+                          onTap: widget.onProfileTap,
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: cardColor,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.account_circle_outlined,
+                              color: textColor,
+                              size: 24,
+                            ),
                           ),
                         ),
                       ],

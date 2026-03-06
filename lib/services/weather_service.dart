@@ -11,6 +11,8 @@ class WeatherService {
           .from('weathers')
           .select()
           .order('id', ascending: true);
+      
+      print("Load weathers...");
 
       if (response.isNotEmpty) {
         final List<Weather> weatherOptions = response.map((w) {

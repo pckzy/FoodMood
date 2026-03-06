@@ -16,10 +16,12 @@ class MatchService {
       final response = await _supabase
           .from('matches')
           .select(
-            'food_id, matched_at, isFavorite, foods(name, description, image_url, food_types(name))',
+            'food_id, matched_at, is_fav, foods(name, description, image_url, food_types(name))',
           )
           .eq('user_id', user.id)
           .order('matched_at', ascending: false);
+
+      print("Load matches...");
 
       return response.map<MatchItem>((row) {
         final item = MatchItem.fromJson(row);
@@ -40,7 +42,7 @@ class MatchService {
       return [];
     }
   }
-  
+
   /// บันทึก match ลงตาราง matches
   Future<void> insertMatch(int foodId, bool? isFavorite) async {
     final user = _supabase.auth.currentUser;
@@ -50,7 +52,7 @@ class MatchService {
       await _supabase.from('matches').insert({
         'user_id': user.id,
         'food_id': foodId,
-        'isFavorite': isFavorite ?? false,
+        'is_fav': isFavorite ?? false,
       });
     } catch (e) {
       print('Error inserting match: $e');
@@ -65,11 +67,47 @@ class MatchService {
     try {
       await _supabase
           .from('matches')
-          .update({'isFavorite': isFavorite})
+          .update({'is_fav': isFavorite})
           .eq('user_id', user.id)
           .eq('food_id', foodId);
     } catch (e) {
       print('Error updating match favorite: $e');
+    }
+  }
+
+  Future<void> deleteMatch(int foodId) async {
+    final user = _supabase.auth.currentUser;
+    if (user == null) return;
+
+    try {
+      await _supabase
+          .from('matches')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('food_id', foodId);
+
+    } catch (e) {
+      print('Error deleting match: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> blacklistFood(int foodId) async {
+    final user = _supabase.auth.currentUser;
+    if (user == null) return;
+
+    try {
+      // Insert into blacklist table (create this table in Supabase if needed)
+      await _supabase.from('blacklist').upsert({
+        'user_id': user.id,
+        'food_id': foodId,
+      });
+
+      // Also remove from matches
+      await deleteMatch(foodId);
+    } catch (e) {
+      print('Error blacklisting food: $e');
+      rethrow;
     }
   }
 }

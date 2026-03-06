@@ -5,17 +5,25 @@ import 'match_card.dart';
 class MatchGrid extends StatelessWidget {
   final List<MatchItem> matches;
   final Function(MatchItem) onFavoriteTap;
+  final bool isManageMode;
+  final Set<int> selectedIds;
+  final Function(MatchItem) onSelectionChanged;
+  final double bottomPadding;
 
   const MatchGrid({
     super.key,
     required this.matches,
     required this.onFavoriteTap,
+    this.isManageMode = false,
+    this.selectedIds = const {},
+    required this.onSelectionChanged,
+    this.bottomPadding = 0,
   });
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + bottomPadding),
       child: Column(
         children: [
           GridView.builder(
@@ -29,9 +37,13 @@ class MatchGrid extends StatelessWidget {
             ),
             itemCount: matches.length,
             itemBuilder: (context, index) {
+              final match = matches[index];
               return MatchCard(
-                match: matches[index],
-                onFavoriteTap: () => onFavoriteTap(matches[index]),
+                match: match,
+                onFavoriteTap: () => onFavoriteTap(match),
+                isManageMode: isManageMode,
+                isSelected: selectedIds.contains(match.foodId),
+                onSelectionChanged: () => onSelectionChanged(match),
               );
             },
           ),

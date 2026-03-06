@@ -13,7 +13,7 @@ class FoodTypeSelectionSection extends StatefulWidget {
   final Function(List<FoodType>) onFoodTypesLoaded;
 
   const FoodTypeSelectionSection({
-    Key? key,
+    super.key,
     required this.selectedFoodType,
     required this.onFoodTypeSelected,
     required this.primaryColor,
@@ -21,7 +21,7 @@ class FoodTypeSelectionSection extends StatefulWidget {
     required this.textColor,
     required this.subtextColor,
     required this.onFoodTypesLoaded,
-  }) : super(key: key);
+  });
 
   @override
   State<FoodTypeSelectionSection> createState() =>

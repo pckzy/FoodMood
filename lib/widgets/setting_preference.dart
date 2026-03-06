@@ -32,7 +32,6 @@ class _SettingPreferenceState extends State<SettingPreference> {
 
   Future<void> _loadBlacklistCount() async {
     final list = await _blacklistService.fetchBlacklistedFoods();
-    print('Loaded blacklist count: ${list.length}');
     if (mounted) {
       setState(() {
         _blacklistCount = list.length;

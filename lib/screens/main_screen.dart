@@ -81,7 +81,12 @@ class _MainScreenState extends State<MainScreen> {
                           setState(() => _currentIndex = 1);
                         },
                       )
-                    : FoodMoodSelectionPage(onSubmit: _onFoodMoodSelected),
+                    : FoodMoodSelectionPage(
+                        onSubmit: _onFoodMoodSelected,
+                        onProfileTap: () {
+                          setState(() => _currentIndex = 2);
+                        },
+                      ),
 
                 MatchHistoryScreen(isActive: _currentIndex == 1),
                 // 2. แทนที่จะใส่ SettingScreen() ตรงๆ ให้ใส่ Navigator ครอบไว้

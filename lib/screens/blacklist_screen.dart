@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foodmood/services/blacklist_service.dart';
 import 'package:foodmood/services/food_service.dart';
-import 'package:foodmood/widgets/custom_header.dart';
 
 class BlacklistScreen extends StatefulWidget {
   const BlacklistScreen({super.key});
@@ -93,9 +92,44 @@ class _BlacklistScreenState extends State<BlacklistScreen> {
           children: [
             Column(
               children: [
-                CustomHeader(
-                  headerTxt: 'Blocked Foods',
-                  onPressed: () => Navigator.pop(context),
+                Container(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                  // padding: EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surface.withValues(alpha: 0.9),
+                    border: Border(
+                      bottom: BorderSide(
+                        color: colorScheme.onSurfaceVariant,
+                        width: 1,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: Icon(
+                          Icons.arrow_back_ios_new,
+                          size: 24,
+                          color: colorScheme.primary,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          'Blocked Foods',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.primary,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 48),
+                    ],
+                  ),
                 ),
                 Expanded(
                   child: Padding(
@@ -131,9 +165,7 @@ class _BlacklistScreenState extends State<BlacklistScreen> {
                             ),
                             decoration: InputDecoration(
                               hintText: 'Search blocked items',
-                              hintStyle: TextStyle(
-                                color: Colors.grey[400],
-                              ),
+                              hintStyle: TextStyle(color: Colors.grey[400]),
                               prefixIcon: Icon(
                                 Icons.search,
                                 color: Colors.grey[600],
@@ -169,10 +201,7 @@ class _BlacklistScreenState extends State<BlacklistScreen> {
                                     _searchQuery.isEmpty
                                         ? 'No blocked items'
                                         : 'No matches found',
-                                    style: TextStyle(
-                                      color: Colors.grey[500]
-
-                                    ),
+                                    style: TextStyle(color: Colors.grey[500]),
                                   ),
                                 )
                               : ListView.separated(

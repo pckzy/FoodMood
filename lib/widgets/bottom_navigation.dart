@@ -18,7 +18,7 @@ class BottomNavigation extends StatelessWidget {
       bottom: 0, left: 0, right: 0,
       child: Container(
         decoration: BoxDecoration(
-          color: colorScheme.surface.withValues(alpha: 0.9),
+          color: colorScheme.surface,
           border: Border(
             top: BorderSide(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2), width: 1),
           ),

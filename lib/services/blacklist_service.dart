@@ -30,6 +30,8 @@ class BlacklistService {
           .select('food_id, foods(*, food_types(name))')
           .eq('user_id', user.id);
 
+      print("Load blacklist...");
+
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
       print('Error fetching blacklisted foods: $e');

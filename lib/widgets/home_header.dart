@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class CustomAppBar extends StatelessWidget {
+class HomeHeader extends StatelessWidget {
   final VoidCallback? onTuneTap;
   final VoidCallback? onProfileTap;
 
-  const CustomAppBar({Key? key, this.onTuneTap, this.onProfileTap})
+  const HomeHeader({Key? key, this.onTuneTap, this.onProfileTap})
     : super(key: key);
 
   @override

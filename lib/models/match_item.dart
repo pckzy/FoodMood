@@ -27,7 +27,7 @@ class MatchItem {
       imageUrl: food['image_url'] as String? ?? '',
       foodType: food['food_types']?['name'] as String? ?? '',
       matchedAt: DateTime.parse(json['matched_at'] as String),
-      isFavorite: json['isFavorite'] as bool? ?? false,
+      isFavorite: json['is_fav'] as bool? ?? false,
     );
   }
 

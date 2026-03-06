@@ -24,6 +24,8 @@ class MoodService {
     try {
       final response = await _supabase.from('moods').select();
 
+      print("Load moods...");
+
       if (response.isNotEmpty) {
         final List<Mood> moods = response.map((mood) {
           final moodOption = Mood.fromJson(mood);

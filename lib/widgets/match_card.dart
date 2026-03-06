@@ -4,9 +4,18 @@ import '../models/match_item.dart';
 class MatchCard extends StatefulWidget {
   final MatchItem match;
   final VoidCallback onFavoriteTap;
+  final bool isManageMode;
+  final bool isSelected;
+  final VoidCallback? onSelectionChanged;
 
-  const MatchCard({Key? key, required this.match, required this.onFavoriteTap})
-    : super(key: key);
+  const MatchCard({
+    super.key,
+    required this.match,
+    required this.onFavoriteTap,
+    this.isManageMode = false,
+    this.isSelected = false,
+    this.onSelectionChanged,
+  });
 
   @override
   State<MatchCard> createState() => _MatchCardState();
@@ -34,11 +43,17 @@ class _MatchCardState extends State<MatchCard> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return GestureDetector(
+      onTap: widget.isManageMode ? widget.onSelectionChanged : null,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF2c2219) : Colors.white,
+          color: widget.isSelected
+              ? const Color(0xFFf48c25).withOpacity(0.12)
+              : (isDark ? const Color(0xFF2c2219) : Colors.white),
           borderRadius: BorderRadius.circular(12),
+          border: widget.isSelected
+              ? Border.all(color: const Color(0xFFf48c25), width: 2)
+              : Border.all(color: Colors.transparent, width: 2),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.15),
@@ -103,35 +118,58 @@ class _MatchCardState extends State<MatchCard> {
                   ),
                 ),
               ),
-              // Favorite button
+              // Top-right: Checkbox (manage mode) or Favorite button (normal)
               Positioned(
                 top: 8,
                 right: 8,
-                child: GestureDetector(
-                  onTap: widget.onFavoriteTap,
-                  child: Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.4),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      widget.match.isFavorite
-                          ? Icons.favorite
-                          : Icons.favorite_border,
-                      color: widget.match.isFavorite
-                          ? Colors.red
-                          : Colors.white,
-                      size: 18,
-                    ),
-                  ),
-                ),
+                child: widget.isManageMode
+                    ? _buildCheckbox()
+                    : _buildFavoriteButton(),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildFavoriteButton() {
+    return GestureDetector(
+      onTap: widget.onFavoriteTap,
+      child: Container(
+        width: 32,
+        height: 32,
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.4),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          widget.match.isFavorite ? Icons.favorite : Icons.favorite_border,
+          color: widget.match.isFavorite ? Colors.red : Colors.white,
+          size: 18,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCheckbox() {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 150),
+      width: 28,
+      height: 28,
+      decoration: BoxDecoration(
+        color: widget.isSelected
+            ? const Color(0xFFf48c25)
+            : Colors.black.withOpacity(0.4),
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: widget.isSelected ? const Color(0xFFf48c25) : Colors.white,
+          width: 2,
+        ),
+      ),
+      child: widget.isSelected
+          ? const Icon(Icons.check, color: Colors.white, size: 16)
+          : null,
     );
   }
 
