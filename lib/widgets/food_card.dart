@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:foodmood/models/food_item.dart';
+import 'package:foodmood/providers/settings_provider.dart';
+import 'package:provider/provider.dart';
 
 /// The visual representation of a Food Card (Stateless)
 class FoodCardView extends StatelessWidget {
@@ -70,7 +72,12 @@ class FoodCardView extends StatelessWidget {
             child: GestureDetector(onTap: onInfo, child: _buildInfoButton()),
           ),
           // Content
-          Positioned(bottom: 0, left: 0, right: 0, child: _buildCardContent()),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: _buildCardContent(context),
+          ),
         ],
       ),
     );
@@ -92,7 +99,11 @@ class FoodCardView extends StatelessWidget {
     );
   }
 
-  Widget _buildCardContent() {
+  Widget _buildCardContent(BuildContext context) {
+    final settings = context.watch<SettingsProvider>();
+    final showHalal = settings.showHalalIcon && foodItem.halal;
+    final showVegan = settings.showVeganIcon && foodItem.isVegetable;
+
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -101,7 +112,7 @@ class FoodCardView extends StatelessWidget {
         children: [
           Row(
             children: [
-              if (foodItem.halal)
+              if (showHalal)
                 SizedBox(
                   width: 30,
                   height: 30,
@@ -112,9 +123,8 @@ class FoodCardView extends StatelessWidget {
                     ),
                   ),
                 ),
-              if (foodItem.halal && foodItem.isVegetable)
-                const SizedBox(width: 8),
-              if (foodItem.isVegetable)
+              if (showHalal && showVegan) const SizedBox(width: 8),
+              if (showVegan)
                 Container(
                   width: 30,
                   height: 30,
@@ -135,8 +145,7 @@ class FoodCardView extends StatelessWidget {
                     ),
                   ),
                 ),
-              if ((foodItem.halal || foodItem.isVegetable) &&
-                  foodItem.spicyLevel > 0)
+              if ((showHalal || showVegan) && foodItem.spicyLevel > 0)
                 const SizedBox(width: 8),
               if (foodItem.spicyLevel > 0)
                 Container(
@@ -147,7 +156,9 @@ class FoodCardView extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.red.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
+                    border: Border.all(
+                      color: Colors.red.withValues(alpha: 0.2),
+                    ),
                   ),
                   child: Text(
                     '🔥' * foodItem.spicyLevel,

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:foodmood/auth/auth_gate.dart';
+import 'package:foodmood/providers/settings_provider.dart';
 import 'package:foodmood/theme/theme.dart';
-import 'package:foodmood/theme/theme_provider.dart';
+import 'package:foodmood/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -15,8 +16,11 @@ void main() async {
 
   await Supabase.initialize(anonKey: supabaseAnonKey, url: supabaseUrl);
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => ThemeProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(create: (context) => SettingsProvider()),
+      ],
       child: const MainApp(),
     ),
   );

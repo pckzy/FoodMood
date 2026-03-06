@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
       GlobalKey<SwipeCardStackState>();
   DateTime? _lastClickTime;
   bool _showNotification = false;
-  String _NotificationText = '';
+  String _notificationText = '';
 
   @override
   void initState() {
@@ -113,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _stackKey.currentState?.fadeOutCurrentCard(() {});
 
       setState(() {
-        _NotificationText = '⭐ Added ${foodItem.name} to favorites!';
+        _notificationText = '⭐ Added ${foodItem.name} to favorites!';
         _showNotification = true;
       });
 
@@ -145,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
         await _blacklistService.addToBlacklist(foodItem.id!);
         if (mounted) {
           setState(() {
-            _NotificationText = '🚫  ${foodItem.name} blacklisted';
+            _notificationText = '🚫  ${foodItem.name} blacklisted';
             _showNotification = true;
           });
           _stackKey.currentState?.swipeLeft();
@@ -226,7 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
           // Top Notification Bar
           NotificationBar(
             showNotification: _showNotification,
-            text: _NotificationText,
+            text: _notificationText,
           ),
         ],
       ),

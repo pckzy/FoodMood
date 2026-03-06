@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:foodmood/providers/settings_provider.dart';
 import 'package:foodmood/screens/blacklist_screen.dart';
 import 'package:foodmood/services/blacklist_service.dart';
 import 'package:foodmood/widgets/setting_groupitem.dart';
+import 'package:provider/provider.dart';
 
 class SettingPreference extends StatefulWidget {
   final bool isActive;
@@ -42,6 +44,7 @@ class _SettingPreferenceState extends State<SettingPreference> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final settings = context.watch<SettingsProvider>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,17 +79,26 @@ class _SettingPreferenceState extends State<SettingPreference> {
             child: Column(
               children: [
                 SettingGroupItem(
-                  icon: Icons.language,
-                  title: 'Language',
-                  value: 'English',
+                  icon: Icons.verified,
+                  title: 'Show Halal Icon',
                   position: SettingItemPosition.first,
-                  // onTap: () {},
+                  isSwitch: true,
+                  switchValue: settings.showHalalIcon,
+                  onSwitchChanged: (value) => settings.toggleHalalIcon(value),
+                ),
+                SettingGroupItem(
+                  icon: Icons.eco,
+                  title: 'Show Vegan Icon',
+                  position: SettingItemPosition.middle,
+                  isSwitch: true,
+                  switchValue: settings.showVeganIcon,
+                  onSwitchChanged: (value) => settings.toggleVeganIcon(value),
                 ),
                 SettingGroupItem(
                   icon: Icons.block,
                   title: 'Blacklist Management',
                   value: '$_blacklistCount Items',
-                  position: SettingItemPosition.middle,
+                  position: SettingItemPosition.last,
                   onTap: () async {
                     await Navigator.of(context).push(
                       MaterialPageRoute(
@@ -95,13 +107,6 @@ class _SettingPreferenceState extends State<SettingPreference> {
                     );
                     _loadBlacklistCount(); // Refresh count after returning
                   },
-                ),
-                SettingGroupItem(
-                  icon: Icons.restaurant_menu,
-                  title: 'Dietary Restrictions',
-                  value: 'Vegetarian',
-                  position: SettingItemPosition.last,
-                  // onTap: () {},
                 ),
               ],
             ),

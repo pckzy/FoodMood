@@ -13,16 +13,23 @@ class SettingGroupItem extends StatelessWidget {
   final Color? titleColor;
   final Color? valueColor;
 
+  final bool isSwitch;
+  final bool switchValue;
+  final ValueChanged<bool>? onSwitchChanged;
+
   const SettingGroupItem({
     super.key,
     required this.icon,
     required this.title,
-    required this.value,
+    this.value = '',
     this.onTap,
     this.position = SettingItemPosition.middle,
     this.containerColor,
     this.titleColor,
     this.valueColor,
+    this.isSwitch = false,
+    this.switchValue = false,
+    this.onSwitchChanged,
   });
 
   BorderRadius get _borderRadius {
@@ -82,22 +89,31 @@ class SettingGroupItem extends StatelessWidget {
                   ),
                 ),
 
-                // Value
-                Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: 14,
+                // Value (only if not switch)
+                if (!isSwitch && value.isNotEmpty)
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: valueColor ?? cs.onTertiaryFixed,
+                    ),
+                  ),
+                if (!isSwitch && value.isNotEmpty) const SizedBox(width: 8),
+
+                // Arrow or Switch
+                if (isSwitch)
+                  Switch(
+                    value: switchValue,
+                    onChanged: onSwitchChanged,
+                    activeTrackColor: cs.secondary.withValues(alpha: 0.5),
+                    activeColor: cs.secondary,
+                  )
+                else
+                  Icon(
+                    Icons.chevron_right,
+                    size: 20,
                     color: valueColor ?? cs.onTertiaryFixed,
                   ),
-                ),
-                const SizedBox(width: 8),
-
-                // Arrow
-                Icon(
-                  Icons.chevron_right,
-                  size: 20,
-                  color: valueColor ?? cs.onTertiaryFixed,
-                ),
               ],
             ),
           ),
