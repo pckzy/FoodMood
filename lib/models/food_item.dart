@@ -7,6 +7,7 @@ class FoodItem {
   final int? typeId;
   final int? weatherId;
   final bool halal;
+  final bool isVegetable;
   final int spicyLevel;
 
   FoodItem({
@@ -18,6 +19,7 @@ class FoodItem {
     this.typeId,
     this.weatherId,
     this.halal = false,
+    this.isVegetable = false,
     this.spicyLevel = 0,
   });
 
@@ -31,6 +33,7 @@ class FoodItem {
       typeId: json['type_id'] as int?,
       weatherId: json['weather_id'] as int?,
       halal: json['halal'] as bool? ?? false,
+      isVegetable: json['is_vegan'] as bool? ?? false,
       spicyLevel: json['spicy_level'] as int? ?? 0,
     );
   }
@@ -43,6 +46,7 @@ class FoodItem {
     int? typeId,
     int? weatherId,
     bool? halal,
+    bool? isVegetable,
     int? spicyLevel,
   }) {
     return FoodItem(
@@ -54,6 +58,7 @@ class FoodItem {
       typeId: typeId ?? this.typeId,
       weatherId: weatherId ?? this.weatherId,
       halal: halal ?? this.halal,
+      isVegetable: isVegetable ?? this.isVegetable,
       spicyLevel: spicyLevel ?? this.spicyLevel,
     );
   }

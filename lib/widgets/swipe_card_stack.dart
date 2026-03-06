@@ -11,13 +11,13 @@ class SwipeCardStack extends StatefulWidget {
   final Function(FoodItem)? onInfo;
 
   const SwipeCardStack({
-    Key? key,
+    super.key,
     required this.foodItems,
     this.onStackFinished,
     this.onReset,
     this.onSwipeRight,
     this.onInfo,
-  }) : super(key: key);
+  });
 
   @override
   State<SwipeCardStack> createState() => SwipeCardStackState();
@@ -139,7 +139,7 @@ class SwipeCardStackState extends State<SwipeCardStack> {
   }
 
   Widget _buildEmptyState() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Center(
       child: Column(
@@ -149,13 +149,13 @@ class SwipeCardStackState extends State<SwipeCardStack> {
             width: 128,
             height: 128,
             decoration: BoxDecoration(
-              color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[100],
+              color: colorScheme.primary.withValues(alpha: 0.05),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.no_food,
               size: 64,
-              color: isDark ? Colors.grey[600] : Colors.grey[300],
+              color: colorScheme.onSurface.withValues(alpha: 0.3),
             ),
           ),
           const SizedBox(height: 24),
@@ -164,23 +164,20 @@ class SwipeCardStackState extends State<SwipeCardStack> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black87,
+              color: colorScheme.primary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'Check back later for more tasty recommendations.',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              color: isDark ? Colors.grey[400] : Colors.grey[500],
-            ),
+            style: TextStyle(fontSize: 14, color: colorScheme.onSurface),
           ),
           const SizedBox(height: 32),
           ElevatedButton.icon(
             onPressed: widget.onReset,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFf48c25),
+              backgroundColor: colorScheme.secondary,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(

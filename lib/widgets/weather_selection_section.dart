@@ -13,7 +13,7 @@ class WeatherSelectionSection extends StatefulWidget {
   final Function(List<Weather>) onWeatherLoaded;
 
   const WeatherSelectionSection({
-    Key? key,
+    super.key,
     required this.selectedWeather,
     required this.onWeatherSelected,
     required this.primaryColor,
@@ -21,7 +21,7 @@ class WeatherSelectionSection extends StatefulWidget {
     required this.textColor,
     required this.subtextColor,
     required this.onWeatherLoaded,
-  }) : super(key: key);
+  });
 
   @override
   State<WeatherSelectionSection> createState() =>
@@ -111,7 +111,7 @@ class _WeatherSelectionSectionState extends State<WeatherSelectionSection> {
                         widget.onWeatherSelected(weather.name);
                       },
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             );

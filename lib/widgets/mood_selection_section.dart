@@ -13,7 +13,7 @@ class MoodSelectionSection extends StatefulWidget {
   final Function(List<Mood>) onMoodsLoaded;
 
   const MoodSelectionSection({
-    Key? key,
+    super.key,
     required this.selectedMood,
     required this.onMoodSelected,
     required this.primaryColor,
@@ -21,7 +21,7 @@ class MoodSelectionSection extends StatefulWidget {
     required this.textColor,
     required this.subtextColor,
     required this.onMoodsLoaded,
-  }) : super(key: key);
+  });
 
   @override
   State<MoodSelectionSection> createState() => _MoodSelectionSectionState();

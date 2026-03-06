@@ -4,23 +4,25 @@ class HomeHeader extends StatelessWidget {
   final VoidCallback? onTuneTap;
   final VoidCallback? onProfileTap;
 
-  const HomeHeader({Key? key, this.onTuneTap, this.onProfileTap})
-    : super(key: key);
+  const HomeHeader({super.key, this.onTuneTap, this.onProfileTap});
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildIconButton(icon: Icons.person_outline, isDark: isDark, onTap: onProfileTap,
+          _buildIconButton(
+            icon: Icons.person_outline,
+            colorScheme: colorScheme,
+            onTap: onProfileTap,
           ),
           Row(
             children: [
-              Icon(Icons.rice_bowl, color: const Color(0xFFf48c25), size: 24),
+              Icon(Icons.rice_bowl, color: colorScheme.secondary, size: 24),
               const SizedBox(width: 8),
               Text(
                 'FoodMood',
@@ -28,12 +30,16 @@ class HomeHeader extends StatelessWidget {
                   fontSize: 20,
                   fontWeight: FontWeight.w800,
                   letterSpacing: -0.5,
-                  color: isDark ? Colors.white : Colors.black87,
+                  color: colorScheme.primary,
                 ),
               ),
             ],
           ),
-          _buildIconButton(icon: Icons.tune, isDark: isDark, onTap: onTuneTap),
+          _buildIconButton(
+            icon: Icons.tune,
+            colorScheme: colorScheme,
+            onTap: onTuneTap,
+          ),
         ],
       ),
     );
@@ -41,7 +47,7 @@ class HomeHeader extends StatelessWidget {
 
   Widget _buildIconButton({
     required IconData icon,
-    required bool isDark,
+    required ColorScheme colorScheme,
     VoidCallback? onTap,
   }) {
     return GestureDetector(
@@ -50,21 +56,17 @@ class HomeHeader extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+          color: colorScheme.tertiaryContainer,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
           ],
         ),
-        child: Icon(
-          icon,
-          size: 20,
-          color: isDark ? Colors.white : Colors.black87,
-        ),
+        child: Icon(icon, size: 20, color: colorScheme.primary),
       ),
     );
   }

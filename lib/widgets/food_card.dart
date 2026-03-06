@@ -9,12 +9,12 @@ class FoodCardView extends StatelessWidget {
   final VoidCallback? onInfo;
 
   const FoodCardView({
-    Key? key,
+    super.key,
     required this.foodItem,
     this.width,
     this.height,
     this.onInfo,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class FoodCardView extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.15),
+            color: Colors.black.withValues(alpha: 0.15),
             blurRadius: 40,
             offset: const Offset(0, 20),
           ),
@@ -56,8 +56,8 @@ class FoodCardView extends StatelessWidget {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
-                  Colors.black.withOpacity(0.4),
-                  Colors.black.withOpacity(0.9),
+                  Colors.black.withValues(alpha: 0.4),
+                  Colors.black.withValues(alpha: 0.9),
                 ],
                 stops: const [0.0, 0.5, 1.0],
               ),
@@ -81,11 +81,11 @@ class FoodCardView extends StatelessWidget {
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
+        color: Colors.white.withValues(alpha: 0.2),
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 8),
         ],
       ),
       child: const Icon(Icons.info_outline, color: Colors.white, size: 20),
@@ -102,19 +102,9 @@ class FoodCardView extends StatelessWidget {
           Row(
             children: [
               if (foodItem.halal)
-                Container(
-                  width: 28,
-                  height: 28,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.yellow.withOpacity(0.2),
-                        blurRadius: 4,
-                        spreadRadius: 1,
-                      ),
-                    ],
-                  ),
+                SizedBox(
+                  width: 30,
+                  height: 30,
                   child: ClipOval(
                     child: Image.asset(
                       'assets/images/halal_logo.png',
@@ -122,7 +112,32 @@ class FoodCardView extends StatelessWidget {
                     ),
                   ),
                 ),
-              const SizedBox(width: 8),
+              if (foodItem.halal && foodItem.isVegetable)
+                const SizedBox(width: 8),
+              if (foodItem.isVegetable)
+                Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.green.withValues(alpha: 0.2),
+                        blurRadius: 4,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  child: ClipOval(
+                    child: Image.asset(
+                      'assets/images/vegan.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              if ((foodItem.halal || foodItem.isVegetable) &&
+                  foodItem.spicyLevel > 0)
+                const SizedBox(width: 8),
               if (foodItem.spicyLevel > 0)
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -130,9 +145,9 @@ class FoodCardView extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.15),
+                    color: Colors.red.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.red.withOpacity(0.2)),
+                    border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
                   ),
                   child: Text(
                     '🔥' * foodItem.spicyLevel,
@@ -146,9 +161,9 @@ class FoodCardView extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.35),
+              color: Colors.black.withValues(alpha: 0.35),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,13 +213,13 @@ class FoodCard extends StatefulWidget {
   final VoidCallback? onInfo;
 
   const FoodCard({
-    Key? key,
+    super.key,
     required this.foodItem,
     required this.onSwipe,
     this.width,
     this.height,
     this.onInfo,
-  }) : super(key: key);
+  });
 
   @override
   State<FoodCard> createState() => FoodCardState();
@@ -367,11 +382,11 @@ class FoodCardState extends State<FoodCard>
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: backgroundColor.withOpacity(0.9),
+        color: backgroundColor.withValues(alpha: 0.9),
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),

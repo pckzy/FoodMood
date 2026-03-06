@@ -7,11 +7,11 @@ class MatchOverlay extends StatefulWidget {
   final VoidCallback onGoToMatches;
 
   const MatchOverlay({
-    Key? key,
+    super.key,
     required this.foodItem,
     required this.onKeepSwiping,
     required this.onGoToMatches,
-  }) : super(key: key);
+  });
 
   @override
   State<MatchOverlay> createState() => _MatchOverlayState();
@@ -54,11 +54,12 @@ class _MatchOverlayState extends State<MatchOverlay>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final screenHeight = MediaQuery.of(context).size.height;
     final imageSize = screenHeight * 0.22;
 
     return Material(
-      color: Colors.black.withOpacity(0.85),
+      color: Colors.black.withValues(alpha: 0.85),
       child: Center(
         child: SingleChildScrollView(
           child: Column(
@@ -71,13 +72,13 @@ class _MatchOverlayState extends State<MatchOverlay>
                   scale: _scaleAnimation,
                   child: Column(
                     children: [
-                      const Text(
+                      Text(
                         "It's a Match!",
                         style: TextStyle(
                           fontFamily: 'Outfit',
                           fontSize: 48,
                           fontWeight: FontWeight.w900,
-                          color: Color(0xFFf48c25),
+                          color: colorScheme.secondary,
                           fontStyle: FontStyle.italic,
                           shadows: [
                             Shadow(
@@ -118,7 +119,7 @@ class _MatchOverlayState extends State<MatchOverlay>
                     border: Border.all(color: Colors.white, width: 4),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFf48c25).withOpacity(0.5),
+                        color: colorScheme.secondary.withValues(alpha: 0.5),
                         blurRadius: 30,
                         spreadRadius: 10,
                       ),
@@ -141,7 +142,7 @@ class _MatchOverlayState extends State<MatchOverlay>
                   child: ElevatedButton(
                     onPressed: widget.onKeepSwiping,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFf48c25),
+                      backgroundColor: colorScheme.secondary,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(28),

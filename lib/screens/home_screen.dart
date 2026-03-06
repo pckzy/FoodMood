@@ -11,6 +11,8 @@ import 'package:foodmood/services/food_service.dart';
 import 'package:foodmood/services/match_service.dart';
 import 'package:foodmood/services/blacklist_service.dart';
 import 'package:foodmood/widgets/match_overlay.dart';
+import 'package:foodmood/widgets/info_bottom_sheet.dart';
+import 'package:foodmood/widgets/notification_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   final Mood mood;
@@ -41,71 +43,98 @@ class _HomeScreenState extends State<HomeScreen> {
   List<FoodItem> _foodItems = [];
   bool _isLoading = true;
   bool _isStackFinished = false;
-  FoodItem? _matchedItem;
+  final GlobalKey<SwipeCardStackState> _stackKey =
+      GlobalKey<SwipeCardStackState>();
+  DateTime? _lastClickTime;
+  bool _showNotification = false;
+  String _NotificationText = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFoods();
+  }
+
+  bool _canClick() {
+    final now = DateTime.now();
+    if (_lastClickTime == null ||
+        now.difference(_lastClickTime!) > const Duration(milliseconds: 500)) {
+      _lastClickTime = now;
+      return true;
+    }
+    return false;
+  }
+
+  Future<void> _loadFoods() async {
+    // fetch foods filtered by user's mood, weather, and food type selection
+    final foods = await _foodService.fetchFoods(
+      moodId: widget.mood.id,
+      weatherId: widget.weather.id,
+      foodTypeId: widget.foodType.id == -1 ? null : widget.foodType.id,
+    );
+    if (mounted) {
+      setState(() {
+        _foodItems = foods;
+        _isLoading = false;
+      });
+    }
+  }
+
+
+
+  void _handleMatch(FoodItem foodItem) {
+    if (foodItem.id != null) {
+      _matchService.insertMatch(foodItem.id!, false);
+      
+      showGeneralDialog(
+        context: context,
+        barrierDismissible: false,
+        barrierColor: Colors.transparent,
+        transitionDuration: const Duration(milliseconds: 0),
+        pageBuilder: (context, _, _) {
+          return MatchOverlay(
+            foodItem: foodItem,
+            onKeepSwiping: () {
+              Navigator.of(context).pop();
+            },
+            onGoToMatches: () {
+              Navigator.of(context).pop();
+              widget.onMatchesTap?.call();
+            },
+          );
+        },
+      );
+    }
+  }
+
+  void _handleFavorite(FoodItem foodItem) {
+    if (foodItem.id != null && _canClick()) {
+      _matchService.insertMatch(foodItem.id!, true);
+      _stackKey.currentState?.fadeOutCurrentCard(() {});
+
+      setState(() {
+        _NotificationText = '⭐ Added ${foodItem.name} to favorites!';
+        _showNotification = true;
+      });
+
+      Future.delayed(const Duration(seconds: 3), () {
+        if (mounted) {
+          setState(() => _showNotification = false);
+        }
+      });
+    }
+  }
 
   void _showInfoPopup(FoodItem foodItem) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? const Color(0xFF2c2219)
-              : Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              foodItem.name,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 32),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _handleBlacklist(foodItem);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red[50],
-                  foregroundColor: Colors.red,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                icon: const Icon(Icons.block),
-                label: const Text(
-                  'Add to Blacklist',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Close'),
-              ),
-            ),
-            const SizedBox(height: 16),
-          ],
-        ),
+      builder: (context) => InfoBottomSheet(
+        foodItem: foodItem,
+        onBlacklist: () {
+          Navigator.pop(context);
+          _handleBlacklist(foodItem);
+        },
       ),
     );
   }
@@ -137,80 +166,12 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  final GlobalKey<SwipeCardStackState> _stackKey =
-      GlobalKey<SwipeCardStackState>();
-  DateTime? _lastClickTime;
-
-  bool _canClick() {
-    final now = DateTime.now();
-    if (_lastClickTime == null ||
-        now.difference(_lastClickTime!) > const Duration(milliseconds: 500)) {
-      _lastClickTime = now;
-      return true;
-    }
-    return false;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadFoods();
-  }
-
-  Future<void> _loadFoods() async {
-    // fetch foods filtered by user's mood, weather, and food type selection
-    final foods = await _foodService.fetchFoods(
-      moodId: widget.mood.id,
-      weatherId: widget.weather.id,
-      foodTypeId: widget.foodType.id == -1 ? null : widget.foodType.id,
-    );
-    if (mounted) {
-      setState(() {
-        _foodItems = foods;
-        _isLoading = false;
-      });
-    }
-  }
-
-  bool _showNotification = false;
-  String _NotificationText = '';
-
-  void _handleMatch(FoodItem foodItem) {
-    if (foodItem.id != null) {
-      _matchService.insertMatch(foodItem.id!, false);
-      setState(() {
-        _matchedItem = foodItem;
-      });
-    }
-  }
-
-  void _handleFavorite(FoodItem foodItem) {
-    if (foodItem.id != null && _canClick()) {
-      _matchService.insertMatch(foodItem.id!, true);
-      _stackKey.currentState?.fadeOutCurrentCard(() {});
-
-      setState(() {
-        _NotificationText = '⭐ Added ${foodItem.name} to favorites!';
-        _showNotification = true;
-      });
-
-      Future.delayed(const Duration(seconds: 3), () {
-        if (mounted) {
-          setState(() => _showNotification = false);
-        }
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDark
-        ? const Color(0xFF221910)
-        : const Color(0xFFf8f7f5);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: colorScheme.surface,
       body: Stack(
         children: [
           SafeArea(
@@ -263,59 +224,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           // Top Notification Bar
-          AnimatedPositioned(
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.easeInOut,
-            top: _showNotification
-                ? MediaQuery.of(context).padding.top + 10
-                : -100,
-            left: 16,
-            right: 16,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: isDark
-                    ? const Color(0xFFf4ede7)
-                    : const Color(0xFF3a2e22),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
-              ),
-              child: Text(
-                _NotificationText,
-                style: TextStyle(
-                  color: isDark
-                      ? const Color(0xFF221910)
-                      : const Color(0xFFf8f7f5),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
+          NotificationBar(
+            showNotification: _showNotification,
+            text: _NotificationText,
           ),
-          // Match Overlay layer
-          if (_matchedItem != null)
-            Positioned.fill(
-              child: MatchOverlay(
-                foodItem: _matchedItem!,
-                onKeepSwiping: () {
-                  setState(() {
-                    _matchedItem = null;
-                  });
-                },
-                onGoToMatches: () {
-                  setState(() {
-                    _matchedItem = null;
-                  });
-                  widget.onMatchesTap?.call();
-                },
-              ),
-            ),
         ],
       ),
     );

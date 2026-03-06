@@ -20,21 +20,21 @@ Future<bool> showConfirmDialog({
   required Color confirmColor,
   IconData? icon,
 }) async {
-  final isDark = Theme.of(context).brightness == Brightness.dark;
+  final colorScheme = Theme.of(context).colorScheme;
 
   final result = await showDialog<bool>(
     context: context,
-    barrierColor: Colors.black.withOpacity(0.5),
+    barrierColor: Colors.black.withValues(alpha: 0.5),
     builder: (ctx) => Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.symmetric(horizontal: 32),
       child: Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF2c2219) : Colors.white,
+          color: colorScheme.tertiaryContainer,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.25),
+              color: Colors.black.withValues(alpha: 0.25),
               blurRadius: 30,
               offset: const Offset(0, 10),
             ),
@@ -48,7 +48,7 @@ Future<bool> showConfirmDialog({
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 28),
               decoration: BoxDecoration(
-                color: confirmColor.withOpacity(0.08),
+                color: confirmColor.withValues(alpha: 0.08),
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(24),
                 ),
@@ -59,7 +59,7 @@ Future<bool> showConfirmDialog({
                     width: 56,
                     height: 56,
                     decoration: BoxDecoration(
-                      color: confirmColor.withOpacity(0.15),
+                      color: confirmColor.withValues(alpha: 0.15),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -77,7 +77,7 @@ Future<bool> showConfirmDialog({
                     style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : const Color(0xFF1c140d),
+                      color: colorScheme.primary,
                     ),
                   ),
                 ],
@@ -95,9 +95,7 @@ Future<bool> showConfirmDialog({
                     style: TextStyle(
                       fontSize: 13,
                       height: 1.5,
-                      color: isDark
-                          ? Colors.white.withOpacity(0.6)
-                          : Colors.black.withOpacity(0.5),
+                      color: colorScheme.onSurface.withValues(alpha: 0.8),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -112,9 +110,9 @@ Future<bool> showConfirmDialog({
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 13),
                             decoration: BoxDecoration(
-                              color: isDark
-                                  ? Colors.white.withOpacity(0.06)
-                                  : Colors.black.withOpacity(0.05),
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.1,
+                              ),
                               borderRadius: BorderRadius.circular(14),
                             ),
                             alignment: Alignment.center,
@@ -123,9 +121,9 @@ Future<bool> showConfirmDialog({
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: isDark
-                                    ? Colors.white.withOpacity(0.7)
-                                    : Colors.black.withOpacity(0.55),
+                                color: colorScheme.onSurface.withValues(
+                                  alpha: 0.9,
+                                ),
                               ),
                             ),
                           ),
@@ -144,7 +142,7 @@ Future<bool> showConfirmDialog({
                               borderRadius: BorderRadius.circular(14),
                               boxShadow: [
                                 BoxShadow(
-                                  color: confirmColor.withOpacity(0.35),
+                                  color: confirmColor.withValues(alpha: 0.35),
                                   blurRadius: 12,
                                   offset: const Offset(0, 4),
                                 ),

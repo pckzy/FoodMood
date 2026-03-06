@@ -47,7 +47,7 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
           ElevatedButton(
             onPressed: () => Navigator.pop(context),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFf48c25),
+              backgroundColor: Theme.of(context).colorScheme.secondary,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -88,16 +88,12 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = const Color(0xFFf48c25);
-    final backgroundColor = isDark
-        ? const Color(0xFF221910)
-        : const Color(0xFFf8f7f5);
-    final cardColor = isDark
-        ? const Color(0xFF3a2e22)
-        : const Color(0xFFf4ede7);
-    final textColor = isDark ? Colors.white : const Color(0xFF1c140d);
-    final subtextColor = isDark ? Colors.grey[400] : Colors.grey[600];
+    final colorScheme = Theme.of(context).colorScheme;
+    final primaryColor = colorScheme.secondary;
+    final backgroundColor = colorScheme.surface;
+    final cardColor = colorScheme.onSurfaceVariant;
+    final textColor = colorScheme.primary;
+    final subtextColor = colorScheme.onSurface;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -116,7 +112,7 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: backgroundColor.withOpacity(0.9),
+                    color: backgroundColor.withValues(alpha: 0.9),
                   ),
                   child: SafeArea(
                     bottom: false,
@@ -159,7 +155,7 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
                   primaryColor: primaryColor,
                   cardColor: cardColor,
                   textColor: textColor,
-                  subtextColor: subtextColor!,
+                  subtextColor: subtextColor,
                   onMoodsLoaded: (moods) {
                     if (_moodsList.isEmpty && moods.isNotEmpty) {
                       setState(() => _moodsList = moods);
@@ -229,7 +225,7 @@ class _FoodMoodSelectionPageState extends State<FoodMoodSelectionPage> {
                           backgroundColor: primaryColor,
                           foregroundColor: Colors.white,
                           elevation: 8,
-                          shadowColor: primaryColor.withOpacity(0.3),
+                          shadowColor: primaryColor.withValues(alpha: 0.3),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),

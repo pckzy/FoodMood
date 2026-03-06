@@ -96,6 +96,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     try {
       await authService.signUpWithEmailPassword(email, password);
 
+      if (!mounted) return;
       // Pop this register page
       Navigator.pop(context);
     } catch (e) {
@@ -312,12 +313,12 @@ class _HeaderSection extends StatelessWidget {
           ),
         ),
         // Brand Name
-        const Text(
+        Text(
           'FOODMOOD',
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: Color(0xFFF48C25),
+            color: colorScheme.secondary,
             letterSpacing: 2.4, // tracking-widest
           ),
         ),

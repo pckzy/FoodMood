@@ -5,20 +5,18 @@ class FilterChips extends StatelessWidget {
   final Function(String) onFilterChanged;
 
   const FilterChips({
-    Key? key,
+    super.key,
     required this.selectedFilter,
     required this.onFilterChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     final filters = ['All', 'Recent', 'Snacks', 'Favorites'];
 
     return Container(
-      color: isDark
-          ? const Color(0xFF221910).withOpacity(0.95)
-          : const Color(0xFFf8f7f5).withOpacity(0.95),
+      color: colorScheme.surface.withValues(alpha: 0.95),
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
@@ -31,7 +29,7 @@ class FilterChips extends StatelessWidget {
               child: _buildFilterChip(
                 label: filter,
                 isSelected: isSelected,
-                isDark: isDark,
+                colorScheme: colorScheme,
               ),
             );
           }).toList(),
@@ -43,7 +41,7 @@ class FilterChips extends StatelessWidget {
   Widget _buildFilterChip({
     required String label,
     required bool isSelected,
-    required bool isDark,
+    required ColorScheme colorScheme,
   }) {
     return InkWell(
       onTap: () => onFilterChanged(label),
@@ -53,19 +51,15 @@ class FilterChips extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
           color: isSelected
-              ? (isDark ? Colors.white : const Color(0xFF1c140d))
-              : (isDark ? const Color(0xFF3a2e26) : const Color(0xFFf4ede7)),
+              ? colorScheme.primary
+              : colorScheme.onSurfaceVariant,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Center(
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected
-                  ? (isDark ? const Color(0xFF1c140d) : Colors.white)
-                  : (isDark
-                        ? const Color(0xFFe8e0d9)
-                        : const Color(0xFF1c140d)),
+              color: isSelected ? colorScheme.surface : colorScheme.primary,
               fontSize: 12,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             ),

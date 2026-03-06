@@ -32,9 +32,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     decoration: BoxDecoration(
                       color: colorScheme.surface,
                       border: Border(
-                        bottom: BorderSide(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
+                        bottom: BorderSide(color: colorScheme.onSurfaceVariant),
                       ),
                     ),
                     child: Text(
@@ -139,7 +137,7 @@ class __ProfileSectionState extends State<_ProfileSection> {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF48C25),
+                      color: colorScheme.secondary,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: Colors.white, width: 2),
                     ),
@@ -174,7 +172,7 @@ class __ProfileSectionState extends State<_ProfileSection> {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: Color(0xFFF48C25),
+                      color: colorScheme.secondary,
                     ),
                   ),
                 ],

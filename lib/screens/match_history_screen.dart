@@ -3,12 +3,14 @@ import '../widgets/match_header.dart';
 import '../widgets/filter_chips.dart';
 import '../widgets/match_grid.dart';
 import '../widgets/confirm_dialog.dart';
+import '../widgets/manage_action_bar.dart';
+import '../widgets/empty_match_state.dart';
 import '../models/match_item.dart';
 import '../services/match_service.dart';
 
 class MatchHistoryScreen extends StatefulWidget {
   final bool isActive;
-  const MatchHistoryScreen({Key? key, this.isActive = false}) : super(key: key);
+  const MatchHistoryScreen({super.key, this.isActive = false});
 
   @override
   State<MatchHistoryScreen> createState() => _MatchHistoryScreenState();
@@ -162,14 +164,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
         break;
       case 'Snacks':
         filtered = filtered
-            .where(
-              (m) =>
-                  m.foodType
-                      .replaceAll(RegExp(r'[^\x00-\x7F\u0E00-\u0E7F\s]'), '')
-                      .trim()
-                      .toLowerCase() ==
-                  'snack',
-            )
+            .where((m) => m.foodType.toLowerCase().contains('snack'))
             .toList();
         filtered.sort((a, b) => b.matchedAt.compareTo(a.matchedAt));
         break;
@@ -189,15 +184,12 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDark
-        ? const Color(0xFF221910)
-        : const Color(0xFFf8f7f5);
+    final colorScheme = Theme.of(context).colorScheme;
 
     final displayMatches = _filteredMatches;
 
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: colorScheme.surface,
       body: Stack(
         children: [
           Column(
@@ -214,7 +206,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                 child: _isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : displayMatches.isEmpty
-                        ? _buildEmptyState()
+                        ? const EmptyMatchState()
                         : MatchGrid(
                             matches: displayMatches,
                             onFavoriteTap: _toggleFavorite,
@@ -233,166 +225,16 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
               left: 10,
               right: 10,
               bottom: 88,
-              child: _buildActionBar(isDark),
+              child: ManageActionBar(
+                selectedCount: _selectedIds.length,
+                onDelete: _deleteSelected,
+                onBlacklist: _blacklistSelected,
+              ),
             )
         ],
       ),
     );
   }
 
-  Widget _buildActionBar(bool isDark) {
-    final hasSelection = _selectedIds.isNotEmpty;
 
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFFf8f7f5) : const Color(0xFF221910),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.12),
-            blurRadius: 16,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // Selection count badge
-          Expanded(
-            child: Text(
-              hasSelection
-                  ? '${_selectedIds.length} selected'
-                  : 'Select items to manage',
-              style: TextStyle(
-                fontSize: 13,
-                color: isDark ? Colors.black.withOpacity(0.45) : Colors.white.withOpacity(0.6),
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          // Delete button
-          _buildActionChip(
-            label: 'Delete',
-            icon: Icons.delete_outline,
-            color: Colors.red,
-            enabled: hasSelection,
-            onTap: _deleteSelected,
-            isDark: isDark,
-          ),
-          const SizedBox(width: 10),
-          // Blacklist button
-          _buildActionChip(
-            label: 'Blacklist',
-            icon: Icons.block,
-            color: Colors.deepOrange,
-            enabled: hasSelection,
-            onTap: _blacklistSelected,
-            isDark: isDark,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionChip({
-    required String label,
-    required IconData icon,
-    required Color color,
-    required bool enabled,
-    required VoidCallback onTap,
-    required bool isDark,
-  }) {
-    return GestureDetector(
-      onTap: enabled ? onTap : null,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: enabled
-              ? color.withOpacity(0.12)
-              : (isDark
-                    ? Colors.black.withOpacity(0.04)
-                    : Colors.white.withOpacity(0.05)),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: enabled ? color.withOpacity(0.4) : Colors.transparent,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              size: 16,
-              color: enabled
-                  ? color
-                  : (isDark
-                        ? Colors.black.withOpacity(0.25)
-                        : Colors.white.withOpacity(0.3)),
-            ),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: enabled
-                    ? color
-                    : (isDark
-                          ? Colors.black.withOpacity(0.25)
-                          : Colors.white.withOpacity(0.3)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEmptyState() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF2c2219) : const Color(0xFFf4ede7),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.restaurant,
-              size: 36,
-              color: isDark
-                  ? const Color(0xFFf48c25).withOpacity(0.5)
-                  : const Color(0xFF9c7349),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'No matches yet',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: isDark ? Colors.white : const Color(0xFF1c140d),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Swipe right on foods you like to create a match!',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 13,
-              color: isDark
-                  ? Colors.white.withOpacity(0.5)
-                  : Colors.black.withOpacity(0.4),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

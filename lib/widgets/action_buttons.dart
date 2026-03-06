@@ -5,12 +5,16 @@ class ActionButtons extends StatelessWidget {
   final VoidCallback? onLike;
   final VoidCallback? onFavorite;
 
-  const ActionButtons({Key? key, this.onDislike, this.onLike, this.onFavorite})
-    : super(key: key);
+  const ActionButtons({
+    super.key,
+    this.onDislike,
+    this.onLike,
+    this.onFavorite,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
@@ -24,7 +28,7 @@ class ActionButtons extends StatelessWidget {
               size: 64,
               iconSize: 32,
               color: Colors.red,
-              isDark: isDark,
+              colorScheme: colorScheme,
             ),
           ),
           const SizedBox(width: 32),
@@ -35,11 +39,11 @@ class ActionButtons extends StatelessWidget {
               size: 56,
               iconSize: 28,
               color: Colors.blue,
-              isDark: isDark,
+              colorScheme: colorScheme,
             ),
           ),
           const SizedBox(width: 32),
-          GestureDetector(onTap: onLike, child: _buildLikeButton()),
+          GestureDetector(onTap: onLike, child: _buildLikeButton(colorScheme)),
         ],
       ),
     );
@@ -50,20 +54,18 @@ class ActionButtons extends StatelessWidget {
     required double size,
     required double iconSize,
     required Color color,
-    required bool isDark,
+    required ColorScheme colorScheme,
   }) {
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey[800] : Colors.white,
+        color: colorScheme.tertiaryContainer,
         shape: BoxShape.circle,
-        border: Border.all(
-          color: isDark ? Colors.grey[700]! : Colors.grey[100]!,
-        ),
+        border: Border.all(color: colorScheme.onSurfaceVariant),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -73,16 +75,16 @@ class ActionButtons extends StatelessWidget {
     );
   }
 
-  Widget _buildLikeButton() {
+  Widget _buildLikeButton(ColorScheme colorScheme) {
     return Container(
       width: 64,
       height: 64,
       decoration: BoxDecoration(
-        color: const Color(0xFFf48c25),
+        color: colorScheme.secondary,
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFf48c25).withOpacity(0.4),
+            color: colorScheme.secondary.withValues(alpha: 0.4),
             blurRadius: 30,
             offset: const Offset(0, 10),
           ),

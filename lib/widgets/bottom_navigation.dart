@@ -5,8 +5,8 @@ class BottomNavigation extends StatelessWidget {
   final Function(int) onTap;
 
   const BottomNavigation({
-    super.key, 
-    required this.currentIndex, 
+    super.key,
+    required this.currentIndex,
     required this.onTap,
   });
 
@@ -15,12 +15,17 @@ class BottomNavigation extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Positioned(
-      bottom: 0, left: 0, right: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
       child: Container(
         decoration: BoxDecoration(
           color: colorScheme.surface,
           border: Border(
-            top: BorderSide(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2), width: 1),
+            top: BorderSide(
+              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
+              width: 1,
+            ),
           ),
         ),
         child: SafeArea(
@@ -31,9 +36,27 @@ class BottomNavigation extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildNavItem(icon: Icons.home, label: 'Home', index: 0, iconColor: colorScheme.onTertiaryFixed),
-                _buildNavItem(icon: Icons.favorite, label: 'Matches', index: 1, iconColor: colorScheme.onTertiaryFixed),
-                _buildNavItem(icon: Icons.settings, label: 'Settings', index: 2, iconColor: colorScheme.onTertiaryFixed),
+                _buildNavItem(
+                  icon: Icons.home,
+                  label: 'Home',
+                  index: 0,
+                  iconColor: colorScheme.onTertiaryFixed,
+                  selectedColor: colorScheme.secondary,
+                ),
+                _buildNavItem(
+                  icon: Icons.favorite,
+                  label: 'Matches',
+                  index: 1,
+                  iconColor: colorScheme.onTertiaryFixed,
+                  selectedColor: colorScheme.secondary,
+                ),
+                _buildNavItem(
+                  icon: Icons.settings,
+                  label: 'Settings',
+                  index: 2,
+                  iconColor: colorScheme.onTertiaryFixed,
+                  selectedColor: colorScheme.secondary,
+                ),
               ],
             ),
           ),
@@ -42,25 +65,27 @@ class BottomNavigation extends StatelessWidget {
     );
   }
 
-  Widget _buildNavItem({required IconData icon, required String label, required int index, required Color iconColor}) {
+  Widget _buildNavItem({
+    required IconData icon,
+    required String label,
+    required int index,
+    required Color iconColor,
+    required Color selectedColor,
+  }) {
     final isSelected = currentIndex == index; // เช็คจากค่าที่รับม
     return GestureDetector(
       onTap: () => onTap(index), // เรียกฟังก์ชันที่ตัวแม่ส่งมา
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 26,
-            color: isSelected ? const Color(0xFFF48C25) : iconColor,
-          ),
+          Icon(icon, size: 26, color: isSelected ? selectedColor : iconColor),
           const SizedBox(height: 4),
           Text(
             label,
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.bold,
-              color: isSelected ? const Color(0xFFF48C25) : iconColor,
+              color: isSelected ? selectedColor : iconColor,
               // color: isSelected ? const Color(0xFFF48C25) : const Color(0xFF94A3B8),
             ),
           ),

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:foodmood/services/blacklist_service.dart';
 import 'package:foodmood/services/food_service.dart';
+import 'package:foodmood/widgets/blacklist_header.dart';
+import 'package:foodmood/widgets/blacklist_search_bar.dart';
+import 'package:foodmood/widgets/blacklist_item_card.dart';
+import 'package:foodmood/widgets/blacklist_notification.dart';
 
 class BlacklistScreen extends StatefulWidget {
   const BlacklistScreen({super.key});
@@ -84,53 +88,13 @@ class _BlacklistScreenState extends State<BlacklistScreen> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: isDarkMode
-          ? colorScheme.surface
-          : const Color(0xFFF8F8F8),
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Stack(
           children: [
             Column(
               children: [
-                Container(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                  // padding: EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surface.withValues(alpha: 0.9),
-                    border: Border(
-                      bottom: BorderSide(
-                        color: colorScheme.onSurfaceVariant,
-                        width: 1,
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: Icon(
-                          Icons.arrow_back_ios_new,
-                          size: 24,
-                          color: colorScheme.primary,
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          'Blocked Foods',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: colorScheme.primary,
-                            letterSpacing: 1,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 48),
-                    ],
-                  ),
-                ),
+                const BlacklistHeader(),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -139,53 +103,22 @@ class _BlacklistScreenState extends State<BlacklistScreen> {
                       children: [
                         const SizedBox(height: 16),
                         // Search Bar
-                        Container(
-                          decoration: BoxDecoration(
-                            color: isDarkMode
-                                ? colorScheme.tertiaryContainer
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(30),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
-                                blurRadius: 10,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: TextField(
-                            onChanged: (value) {
-                              setState(() {
-                                _searchQuery = value;
-                                _filterList();
-                              });
-                            },
-                            style: TextStyle(
-                              color: isDarkMode ? Colors.white : Colors.black,
-                            ),
-                            decoration: InputDecoration(
-                              hintText: 'Search blocked items',
-                              hintStyle: TextStyle(color: Colors.grey[400]),
-                              prefixIcon: Icon(
-                                Icons.search,
-                                color: Colors.grey[600],
-                              ),
-                              border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 15,
-                              ),
-                            ),
-                          ),
+                        BlacklistSearchBar(
+                          onChanged: (value) {
+                            setState(() {
+                              _searchQuery = value;
+                              _filterList();
+                            });
+                          },
+                          isDarkMode: isDarkMode,
+                          colorScheme: colorScheme,
                         ),
                         const SizedBox(height: 24),
                         // Help Text
                         Text(
                           'These items will not appear in your swipe stack. Unblock them to bring them back into your recommendations.',
                           style: TextStyle(
-                            color: isDarkMode
-                                ? colorScheme.onPrimary
-                                : const Color(0xFF8B735B),
+                            color: colorScheme.onSurface,
                             fontSize: 14,
                             height: 1.5,
                           ),
@@ -222,101 +155,16 @@ class _BlacklistScreenState extends State<BlacklistScreen> {
                                       'foods/${food['image_url']}',
                                     );
 
-                                    return Container(
-                                      padding: const EdgeInsets.all(12),
-                                      decoration: BoxDecoration(
-                                        color: isDarkMode
-                                            ? colorScheme.tertiaryContainer
-                                            : Colors.white,
-                                        borderRadius: BorderRadius.circular(20),
+                                    return BlacklistItemCard(
+                                      food: food,
+                                      typeName: typeName,
+                                      imageUrl: imageUrl,
+                                      onUnblock: () => _unblockFood(
+                                        food['id'],
+                                        food['name'],
                                       ),
-                                      child: Row(
-                                        children: [
-                                          // Food Image
-                                          ClipRRect(
-                                            borderRadius: BorderRadius.circular(
-                                              25,
-                                            ),
-                                            child: Image.network(
-                                              imageUrl,
-                                              width: 50,
-                                              height: 50,
-                                              fit: BoxFit.cover,
-                                              errorBuilder: (context, e, s) =>
-                                                  Container(
-                                                    width: 50,
-                                                    height: 50,
-                                                    color: isDarkMode
-                                                        ? Colors.white10
-                                                        : Colors.grey[200],
-                                                    child: const Icon(
-                                                      Icons.restaurant,
-                                                    ),
-                                                  ),
-                                            ),
-                                          ),
-                                          const SizedBox(width: 16),
-                                          // Details
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  food['name'],
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 16,
-                                                    color: isDarkMode
-                                                        ? Colors.white
-                                                        : Colors.black,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  '$typeName • ${food['description'].split(',').first}',
-                                                  style: TextStyle(
-                                                    color: Colors.grey[400],
-                                                    fontSize: 13,
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          // Unblock button
-                                          TextButton(
-                                            onPressed: () => _unblockFood(
-                                              food['id'],
-                                              food['name'],
-                                            ),
-                                            style: TextButton.styleFrom(
-                                              backgroundColor: isDarkMode
-                                                  ? Colors.orange.withOpacity(
-                                                      0.1,
-                                                    )
-                                                  : const Color(0xFFFFF5EB),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 16,
-                                                  ),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                            ),
-                                            child: const Text(
-                                              'Unblock',
-                                              style: TextStyle(
-                                                color: Color(0xFFFF9E44),
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                      isDarkMode: isDarkMode,
+                                      colorScheme: colorScheme,
                                     );
                                   },
                                 ),
@@ -328,42 +176,9 @@ class _BlacklistScreenState extends State<BlacklistScreen> {
               ],
             ),
             // Custom Notification
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.easeOutBack,
-              bottom: _showNotification ? 84 : -100,
-              right: 20,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF2D2D2D),
-                  borderRadius: BorderRadius.circular(40),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.check_circle, color: Color(0xFF4CAF50)),
-                    const SizedBox(width: 12),
-                    Text(
-                      _notificationText,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            BlacklistNotification(
+              showNotification: _showNotification,
+              notificationText: _notificationText,
             ),
           ],
         ),

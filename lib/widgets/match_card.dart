@@ -28,11 +28,11 @@ class _MatchCardState extends State<MatchCard> {
         .trim()
         .toLowerCase()) {
       case 'snack':
-        return const Color(0xFFF4B400).withOpacity(0.8);
+        return const Color(0xFFF4B400).withValues(alpha: 0.8);
       case 'drink':
-        return const Color(0xFF4285F4).withOpacity(0.8);
+        return const Color(0xFF4285F4).withValues(alpha: 0.8);
       case 'fruit':
-        return const Color(0xFF34A853).withOpacity(0.8);
+        return const Color(0xFF34A853).withValues(alpha: 0.8);
       default:
         return Colors.black;
     }
@@ -40,7 +40,7 @@ class _MatchCardState extends State<MatchCard> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return GestureDetector(
       onTap: widget.isManageMode ? widget.onSelectionChanged : null,
@@ -48,15 +48,15 @@ class _MatchCardState extends State<MatchCard> {
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
           color: widget.isSelected
-              ? const Color(0xFFf48c25).withOpacity(0.12)
-              : (isDark ? const Color(0xFF2c2219) : Colors.white),
+              ? colorScheme.secondary.withValues(alpha: 0.12)
+              : colorScheme.tertiaryContainer,
           borderRadius: BorderRadius.circular(12),
           border: widget.isSelected
-              ? Border.all(color: const Color(0xFFf48c25), width: 2)
+              ? Border.all(color: colorScheme.secondary, width: 2)
               : Border.all(color: Colors.transparent, width: 2),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.15),
+              color: Colors.black.withValues(alpha: 0.15),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -66,16 +66,16 @@ class _MatchCardState extends State<MatchCard> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildImageSection(isDark),
-            _buildTextSection(isDark),
-            _buildInfoSection(isDark),
+            _buildImageSection(colorScheme),
+            _buildTextSection(colorScheme),
+            _buildInfoSection(colorScheme),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildImageSection(bool isDark) {
+  Widget _buildImageSection(ColorScheme colorScheme) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: AspectRatio(
@@ -111,7 +111,7 @@ class _MatchCardState extends State<MatchCard> {
                   child: Text(
                     widget.match.foodType,
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
                     ),
@@ -123,7 +123,7 @@ class _MatchCardState extends State<MatchCard> {
                 top: 8,
                 right: 8,
                 child: widget.isManageMode
-                    ? _buildCheckbox()
+                    ? _buildCheckbox(colorScheme)
                     : _buildFavoriteButton(),
               ),
             ],
@@ -140,7 +140,7 @@ class _MatchCardState extends State<MatchCard> {
         width: 32,
         height: 32,
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.4),
+          color: Colors.black.withValues(alpha: 0.4),
           shape: BoxShape.circle,
         ),
         child: Icon(
@@ -152,18 +152,18 @@ class _MatchCardState extends State<MatchCard> {
     );
   }
 
-  Widget _buildCheckbox() {
+  Widget _buildCheckbox(ColorScheme colorScheme) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 150),
       width: 28,
       height: 28,
       decoration: BoxDecoration(
         color: widget.isSelected
-            ? const Color(0xFFf48c25)
-            : Colors.black.withOpacity(0.4),
+            ? colorScheme.secondary
+            : Colors.black.withValues(alpha: 0.4),
         shape: BoxShape.circle,
         border: Border.all(
-          color: widget.isSelected ? const Color(0xFFf48c25) : Colors.white,
+          color: widget.isSelected ? colorScheme.secondary : Colors.white,
           width: 2,
         ),
       ),
@@ -173,7 +173,7 @@ class _MatchCardState extends State<MatchCard> {
     );
   }
 
-  Widget _buildTextSection(bool isDark) {
+  Widget _buildTextSection(ColorScheme colorScheme) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Column(
@@ -184,7 +184,7 @@ class _MatchCardState extends State<MatchCard> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              color: isDark ? Colors.white : const Color(0xFF1c140d),
+              color: colorScheme.primary,
               fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
@@ -195,9 +195,7 @@ class _MatchCardState extends State<MatchCard> {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              color: isDark
-                  ? Colors.white.withOpacity(0.6)
-                  : Colors.black.withOpacity(0.5),
+              color: colorScheme.onSurface.withValues(alpha: 0.8),
               fontSize: 11,
               height: 1.3,
             ),
@@ -207,14 +205,14 @@ class _MatchCardState extends State<MatchCard> {
     );
   }
 
-  Widget _buildInfoSection(bool isDark) {
+  Widget _buildInfoSection(ColorScheme colorScheme) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
       child: Row(
         children: [
           Icon(
             Icons.favorite,
-            color: const Color(0xFFf48c25).withOpacity(0.8),
+            color: colorScheme.secondary.withValues(alpha: 0.8),
             size: 12,
           ),
           const SizedBox(width: 4),
@@ -224,9 +222,7 @@ class _MatchCardState extends State<MatchCard> {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                color: isDark
-                    ? const Color(0xFFc4a07a)
-                    : const Color(0xFF9c7349),
+                color: colorScheme.onPrimary,
                 fontSize: 10,
                 fontWeight: FontWeight.w500,
               ),

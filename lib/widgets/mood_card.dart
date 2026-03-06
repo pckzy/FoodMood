@@ -10,14 +10,14 @@ class MoodCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const MoodCard({
-    Key? key,
+    super.key,
     required this.mood,
     required this.isSelected,
     required this.primaryColor,
     required this.cardColor,
     required this.textColor,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,7 @@ class MoodCard extends StatelessWidget {
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
-                            color: primaryColor.withOpacity(0.2),
+                            color: primaryColor.withValues(alpha: 0.2),
                             blurRadius: 8,
                             spreadRadius: 2,
                           ),
@@ -67,7 +67,7 @@ class MoodCard extends StatelessWidget {
                                         ? loadingProgress.cumulativeBytesLoaded /
                                             loadingProgress.expectedTotalBytes!
                                               : null,
-                                          color: primaryColor.withOpacity(0.5),
+                                          color: primaryColor.withValues(alpha: 0.5),
                                         ),
                                       );
                                     },
@@ -76,7 +76,7 @@ class MoodCard extends StatelessWidget {
                                     color: cardColor,
                                     child: Icon(
                                       Icons.image_not_supported,
-                                      color: textColor.withOpacity(0.5),
+                                      color: textColor.withValues(alpha: 0.5),
                                       size: 50,
                                     ),
                                   );
@@ -85,7 +85,7 @@ class MoodCard extends StatelessWidget {
                             : Center(
                                 child: Icon(
                                   Icons.image_not_supported,
-                                  color: textColor.withOpacity(0.5),
+                                  color: textColor.withValues(alpha: 0.5),
                                   size: 50,
                                 ),
                               ),
@@ -95,7 +95,7 @@ class MoodCard extends StatelessWidget {
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(14),
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                       ),
                     ),
                     // Check icon
@@ -106,7 +106,7 @@ class MoodCard extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha: 0.9),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(

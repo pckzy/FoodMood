@@ -19,10 +19,8 @@ class _SettingAppearanceState extends State<SettingAppearance> {
     int selectedIndex;
     if (themeProvider.themeMode == ThemeMode.light) {
       selectedIndex = 0;
-    } else if (themeProvider.themeMode == ThemeMode.dark) {
-      selectedIndex = 1;
     } else {
-      selectedIndex = 2;
+      selectedIndex = 1;
     }
 
     return Column(
@@ -65,13 +63,13 @@ class _SettingAppearanceState extends State<SettingAppearance> {
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF48C25).withValues(alpha: 0.1),
+                        color: colorScheme.secondary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.dark_mode,
                         size: 18,
-                        color: Color(0xFFF48C25),
+                        color: colorScheme.secondary,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -109,13 +107,6 @@ class _SettingAppearanceState extends State<SettingAppearance> {
                         onTap: () => themeProvider.setTheme(1),
                         colorScheme: colorScheme,
                       ),
-                      _buildThemeButton(
-                        label: 'System',
-                        index: 2,
-                        currentSelection: selectedIndex,
-                        onTap: () => themeProvider.setTheme(2),
-                        colorScheme: colorScheme,
-                      ),
                     ],
                   ),
                 ),
@@ -140,7 +131,7 @@ class _SettingAppearanceState extends State<SettingAppearance> {
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
-            color: isSelected ? Colors.white : Colors.transparent,
+            color: isSelected ? colorScheme.surface : colorScheme.tertiaryFixed,
             borderRadius: BorderRadius.circular(6),
             boxShadow: isSelected
                 ? [
@@ -158,7 +149,7 @@ class _SettingAppearanceState extends State<SettingAppearance> {
               fontSize: 14,
               fontWeight: FontWeight.w500,
               color: isSelected
-                  ? const Color(0xFFF48C25)
+                  ? colorScheme.secondary
                   : colorScheme.onTertiaryFixed,
             ),
           ),

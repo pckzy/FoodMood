@@ -13,10 +13,10 @@ class FoodTypeButton extends StatelessWidget {
     this.primaryColor,
     this.cardColor,
     this.textColor, {
-    Key? key,
+    super.key,
     this.isSelected = false,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,11 +26,9 @@ class FoodTypeButton extends StatelessWidget {
         backgroundColor: isSelected ? primaryColor : cardColor,
         foregroundColor: isSelected ? Colors.white : textColor,
         elevation: isSelected ? 4 : 0,
-        shadowColor: isSelected ? const Color(0xFFffd4a8) : null,
+        shadowColor: isSelected ? primaryColor.withValues(alpha: 0.3) : null,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       child: Text(
         text,

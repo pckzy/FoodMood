@@ -5,25 +5,19 @@ class MatchHeader extends StatelessWidget {
   final bool isManageMode;
 
   const MatchHeader({
-    Key? key,
+    super.key,
     required this.onManageTap,
     this.isManageMode = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark
-            ? const Color(0xFF221910).withOpacity(0.95)
-            : const Color(0xFFf8f7f5).withOpacity(0.95),
-        border: Border(
-          bottom: BorderSide(
-            color: isDark ? const Color(0xFF3a2e26) : const Color(0xFFf4ede7),
-          ),
-        ),
+        color: colorScheme.surface.withValues(alpha: 0.95),
+        border: Border(bottom: BorderSide(color: colorScheme.onSurfaceVariant)),
       ),
       child: SafeArea(
         bottom: false,
@@ -56,8 +50,8 @@ class MatchHeader extends StatelessWidget {
                   ),
                   child: Text(
                     isManageMode ? 'Cancel' : 'Manage',
-                    style: const TextStyle(
-                      color: Color(0xFFf48c25),
+                    style: TextStyle(
+                      color: colorScheme.secondary,
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),

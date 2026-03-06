@@ -85,7 +85,6 @@ class MatchService {
           .delete()
           .eq('user_id', user.id)
           .eq('food_id', foodId);
-
     } catch (e) {
       print('Error deleting match: $e');
       rethrow;

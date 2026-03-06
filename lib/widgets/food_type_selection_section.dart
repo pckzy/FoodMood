@@ -111,7 +111,7 @@ class _FoodTypeSelectionSectionState extends State<FoodTypeSelectionSection> {
                         widget.onFoodTypeSelected(foodType.name);
                       },
                     );
-                  }).toList(),
+                  }),
                   FoodTypeButton(
                     'All',
                     widget.primaryColor,

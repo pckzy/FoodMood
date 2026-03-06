@@ -29,23 +29,20 @@ class FoodService {
       List<int> excludedItems = [];
 
       if (user != null) {
-        // Fetch already matched food IDs
-        final matchesResponse = await _supabase
-            .from('matches')
-            .select('food_id')
-            .eq('user_id', user.id);
+        // Fetch matched and blacklisted food IDs concurrently
+        final results = await Future.wait([
+          _supabase.from('matches').select('food_id').eq('user_id', user.id),
+          _supabase.from('blacklist').select('food_id').eq('user_id', user.id),
+        ]);
+
+        final matchesResponse = results[0];
+        final blacklistResponse = results[1];
 
         if (matchesResponse.isNotEmpty) {
           excludedItems.addAll(
             (matchesResponse as List).map((m) => m['food_id'] as int),
           );
         }
-
-        // Fetch blacklisted food IDs
-        final blacklistResponse = await _supabase
-            .from('blacklist')
-            .select('food_id')
-            .eq('user_id', user.id);
 
         if (blacklistResponse.isNotEmpty) {
           excludedItems.addAll(
@@ -61,8 +58,6 @@ class FoodService {
           )
           .eq('foods_moods.mood_id', moodId)
           .eq('foods_weathers.weather_id', weatherId);
-
-      print("Load foods...");
 
       // Apply food type filter only if it's not null
       if (foodTypeId != null) {
