@@ -219,18 +219,19 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
               ),
             ],
           ),
-          // Pinned above the bottom nav bar (nav bar is 80 px tall)
-          if (_isManageMode)
-            Positioned(
-              left: 10,
-              right: 10,
-              bottom: 88,
-              child: ManageActionBar(
-                selectedCount: _selectedIds.length,
-                onDelete: _deleteSelected,
-                onBlacklist: _blacklistSelected,
-              ),
-            )
+          // Animated ManageActionBar pinned above the bottom nav bar
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            left: 10,
+            right: 10,
+            bottom: _isManageMode ? 88 : -100, // Slides off-screen when not in manage mode
+            child: ManageActionBar(
+              selectedCount: _selectedIds.length,
+              onDelete: _deleteSelected,
+              onBlacklist: _blacklistSelected,
+            ),
+          )
         ],
       ),
     );
