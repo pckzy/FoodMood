@@ -15,6 +15,8 @@ import 'package:foodmood/services/blacklist_service.dart';
 import 'package:foodmood/widgets/match_overlay.dart';
 import 'package:foodmood/widgets/notification_bar.dart';
 
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 class HomeScreen extends StatefulWidget {
   final Mood mood;
   final Weather weather;
@@ -137,7 +139,10 @@ class _HomeScreenState extends State<HomeScreen> {
             left: 0,
             right: 0,
             child: ImageCarousel(
-              imageUrls: [foodItem.imageUrl, foodItem.imageUrl, foodItem.imageUrl],
+              imageUrls: [foodItem.imageUrl, 
+              Supabase.instance.client.storage.from('images').getPublicUrl('foods/example1.png'), 
+              Supabase.instance.client.storage.from('images').getPublicUrl('foods/example2.png')
+              ],
             ),
           ),
           // Info Bottom Sheet anchored at bottom
