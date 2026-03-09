@@ -41,7 +41,7 @@ class SettingLogout extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'FoodMood v1.0.2',
+            'FoodMood v1.0.3',
             style: TextStyle(
               fontSize: 12,
               color: colorScheme.onPrimary,
