@@ -1,12 +1,29 @@
 import 'package:flutter/material.dart';
 
 class EmptyMatchState extends StatelessWidget {
-  const EmptyMatchState({super.key});
+  final String? filter;
+
+  const EmptyMatchState({super.key, this.filter});
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    String title;
+    String subtitle;
+
+    if (filter == 'snacks') {
+      title = 'No matching snacks yet';
+      subtitle = 'Swipe right on snacks you like to create a match!';
+    } else if (filter == 'favorites') {
+      title = 'No favorites yet';
+      subtitle = 'Add foods to your favorites to see them here!';
+    } else {
+      title = 'No matches yet';
+      subtitle = 'Swipe right on foods you like to create a match!';
+    }
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -28,7 +45,7 @@ class EmptyMatchState extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'No matches yet',
+            title,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -37,7 +54,7 @@ class EmptyMatchState extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Swipe right on foods you like to create a match!',
+            subtitle,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 13,

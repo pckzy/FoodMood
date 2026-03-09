@@ -206,7 +206,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                 child: _isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : displayMatches.isEmpty
-                        ? const EmptyMatchState()
+                        ? EmptyMatchState(filter: _selectedFilter.toLowerCase())
                         : MatchGrid(
                             matches: displayMatches,
                             onFavoriteTap: _toggleFavorite,

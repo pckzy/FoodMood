@@ -106,7 +106,7 @@ class SettingGroupItem extends StatelessWidget {
                     value: switchValue,
                     onChanged: onSwitchChanged,
                     activeTrackColor: cs.secondary.withValues(alpha: 0.5),
-                    activeColor: cs.secondary,
+                    activeThumbColor: cs.secondary,
                   )
                 else
                   Icon(
