@@ -6,12 +6,13 @@ import 'package:foodmood/widgets/home_header.dart';
 import 'package:foodmood/widgets/mood_chip.dart';
 import 'package:foodmood/widgets/swipe_card_stack.dart';
 import 'package:foodmood/widgets/action_buttons.dart';
+import 'package:foodmood/widgets/info_bottom_sheet.dart';
+import 'package:foodmood/widgets/image_carousel.dart';
 import 'package:foodmood/models/food_item.dart';
 import 'package:foodmood/services/food_service.dart';
 import 'package:foodmood/services/match_service.dart';
 import 'package:foodmood/services/blacklist_service.dart';
 import 'package:foodmood/widgets/match_overlay.dart';
-import 'package:foodmood/widgets/info_bottom_sheet.dart';
 import 'package:foodmood/widgets/notification_bar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -80,12 +81,10 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-
-
   void _handleMatch(FoodItem foodItem) {
     if (foodItem.id != null) {
       _matchService.insertMatch(foodItem.id!, false);
-      
+
       showGeneralDialog(
         context: context,
         barrierDismissible: false,
@@ -129,12 +128,44 @@ class _HomeScreenState extends State<HomeScreen> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => InfoBottomSheet(
-        foodItem: foodItem,
-        onBlacklist: () {
-          Navigator.pop(context);
-          _handleBlacklist(foodItem);
-        },
+      isScrollControlled: true,
+      builder: (context) => Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned(
+            bottom: MediaQuery.of(context).size.height / 1.8 - 24,
+            left: 0,
+            right: 0,
+            child: ImageCarousel(
+              imageUrls: [foodItem.imageUrl, foodItem.imageUrl, foodItem.imageUrl],
+            ),
+          ),
+          // Info Bottom Sheet anchored at bottom
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: InfoBottomSheet(
+              foodItem: foodItem,
+              onBlacklist: () {
+                Navigator.pop(context);
+                _handleBlacklist(foodItem);
+              },
+              onLike: () {
+                Navigator.pop(context);
+                if (_canClick()) _stackKey.currentState?.swipeRight();
+              },
+              onDislike: () {
+                Navigator.pop(context);
+                if (_canClick()) _stackKey.currentState?.swipeLeft();
+              },
+              onFavorite: () {
+                Navigator.pop(context);
+                _handleFavorite(foodItem);
+              },
+            ),
+          ),   
+        ],
       ),
     );
   }

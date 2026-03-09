@@ -51,30 +51,48 @@ class FoodService {
         }
       }
 
+      // Step 1: Fetch matching food IDs
       var query = _supabase
           .from('foods')
           .select(
-            '*, foods_moods!inner(mood_id), foods_weathers!inner(weather_id)',
+            'id, foods_moods!inner(mood_id), foods_weathers!inner(weather_id)',
           )
           .eq('foods_moods.mood_id', moodId)
           .eq('foods_weathers.weather_id', weatherId);
 
-      // Apply food type filter only if it's not null
+      // Apply food type filter to ID fetch
       if (foodTypeId != null) {
         query = query.eq('type_id', foodTypeId);
       }
 
-      // Exclude matched and blacklisted foods
+      // Exclude matched and blacklisted foods from ID fetch
       if (excludedItems.isNotEmpty) {
         query = query.not('id', 'in', excludedItems);
       }
 
-      final response = await query;
+      final idResponse = await query;
+
+      if (idResponse.isEmpty) return [];
+
+      final List<int> matchingIds = (idResponse as List)
+          .map((f) => f['id'] as int)
+          .toList();
+
+      // Step 2: Fetch full details for the matching IDs
+      final response = await _supabase
+          .from('foods')
+          .select('''
+            *,
+            food_types(id, name),
+            foods_moods(mood_id, moods(id, name, image_url)),
+            foods_weathers(weather_id, weathers(id, name))
+          ''')
+          .filter('id', 'in', '(${matchingIds.join(',')})');
 
       if (response.isNotEmpty) {
         final List<FoodItem> foods = response.map((food) {
           final foodItem = FoodItem.fromJson(food);
-          // Convert image_url to public URL
+          // Convert food image_url to public URL
           final publicImageUrl = getImageUrl("foods/${foodItem.imageUrl}");
           return foodItem.copyWith(imageUrl: publicImageUrl);
         }).toList();
