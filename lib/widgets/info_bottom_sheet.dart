@@ -20,10 +20,11 @@ class InfoBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Container(
       height: MediaQuery.of(context).size.height / 1.8,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
       ),
       child: SingleChildScrollView(
@@ -37,7 +38,7 @@ class InfoBottomSheet extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: colorScheme.onSurface.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -57,21 +58,21 @@ class InfoBottomSheet extends StatelessWidget {
                           text: foodItem.type!.name,
                           icon: Icons.restaurant_menu,
                           color: Colors.orange,
-                          backgroundColor: Colors.orange[100]?.withOpacity(0.5),
+                          backgroundColor: Colors.orange[100],
                         ),
                       for (final mood in foodItem.moods)
                         _buildBadge(
                           text: mood.name,
                           icon: Icons.favorite_border,
                           color: Colors.purple,
-                          backgroundColor: Colors.purple[100]?.withOpacity(0.5),
+                          backgroundColor: Colors.purple[100]
                         ),
                       for (final weather in foodItem.weathers)
                         _buildBadge(
                           text: weather.name,
                           icon: Icons.wb_sunny_outlined,
                           color: Colors.blue,
-                          backgroundColor: Colors.blue[100]?.withOpacity(0.5),
+                          backgroundColor: Colors.blue[100],
                         ),
                     ],
                   ),
@@ -79,21 +80,21 @@ class InfoBottomSheet extends StatelessWidget {
                   // Food Name
                   Text(
                     foodItem.name,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.w900,
                       letterSpacing: -0.5,
-                      color: Color(0xFF1A1A1A),
+                      color: colorScheme.primary,
                     ),
                   ),
                   const SizedBox(height: 16),
                   // About this dish
-                  const Text(
+                  Text(
                     'About this dish',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
-                      color: Color(0xFF1A1A1A),
+                      color: colorScheme.primary,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -102,7 +103,7 @@ class InfoBottomSheet extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 15,
                       height: 1.5,
-                      color: Colors.grey[700],
+                      color: colorScheme.primary,
                       fontWeight: FontWeight.w400,
                     ),
                   ),

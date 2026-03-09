@@ -105,7 +105,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: colorScheme.primary.withOpacity(0.6),
+                      color: Colors.black.withOpacity(0.6),
                       blurRadius: 12,
                     ),
                   ],
