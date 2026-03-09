@@ -11,6 +11,14 @@ Smart Food Selection & Mood-Based Recommendation System
 
 ---
 
+## Video Demo
+
+สามารถรับชมวิดีโอสาธิตการทำงานของแอปพลิเคชัน **FoodMood** ได้ที่นี่
+
+🎥 Demo Video: [[Youtube Link](https://youtu.be/E4exZeqn-N0)]
+
+---
+
 ## Problem Statement
 
 "วันนี้กินอะไรดีนะ?" เป็นประโยคยอดฮิตที่สะท้อนถึงปัญหา Choice Overload หรือการมีตัวเลือกมาก
@@ -74,6 +82,39 @@ Smart Food Selection & Mood-Based Recommendation System
 - **Clean Architecture**  
   จัดระเบียบโครงสร้างซอฟต์แวร์ให้เป็นระเบียบ โดยแยก Business Logic ออกจาก Framework และ UI อย่างชัดเจน
 
+---
+
+## Installation
+
+ขั้นตอนการติดตั้งและรันโปรเจกต์บนเครื่องของคุณ
+
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/pckzy/FoodMood.git
+cd FoodMood
+```
+
+### 2. Install Dependencies
+
+```bash
+flutter pub get
+```
+
+### 3. Setup Environment Variables
+
+สร้างไฟล์ `.env` ใน root ของโปรเจกต์ แล้วใส่ค่า Supabase ดังนี้
+
+```env
+SUPABASE_URL=your_supabase_project_url
+SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+### 4. Run the Project
+
+```bash
+flutter run
+```
 
 ---
 
